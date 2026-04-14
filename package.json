@@ -1,0 +1,10 @@
+{
+  "name": "frontend-programacion-de-software",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix web run start",
+    "build": "npm --prefix web run build",
+    "test": "npm --prefix web run test",
+    "ng": "npm --prefix web exec ng --"
+  }
+}
