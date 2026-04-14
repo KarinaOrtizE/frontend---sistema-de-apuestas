@@ -20,30 +20,44 @@ export const routes: Routes = [
           import('./features/usuarios/usuario-list').then((m) => m.UsuarioListComponent),
       },
       {
-        path: 'categorias',
+        path: 'billeteras',
         loadComponent: () =>
-          import('./features/categorias/categoria-list').then((m) => m.CategoriaListComponent),
+          import('./features/billeteras/billetera-list').then((m) => m.BilleteraListComponent),
       },
       {
-        path: 'productos',
+        path: 'apuestas',
         loadComponent: () =>
-          import('./features/productos/producto-list').then((m) => m.ProductoListComponent),
+          import('./features/apuestas/apuesta-list').then((m) => m.ApuestaListComponent),
       },
       {
-        path: 'pedidos',
+        path: 'metodos-pago',
         loadComponent: () =>
-          import('./features/pedidos/pedido-list').then((m) => m.PedidoListComponent),
+          import('./features/metodos-pago/metodo-pago-list').then((m) => m.MetodoPagoListComponent),
       },
       {
-        path: 'detalles-pedido',
+        path: 'transacciones',
         loadComponent: () =>
-          import('./features/detalles-pedido/detalle-pedido-list').then(
-            (m) => m.DetallePedidoListComponent,
-          ),
+          import('./features/transacciones/transaccion-list').then(
+            (m) => m.TransaccionListComponent),
       },
       {
-        path: 'pagos',
-        loadComponent: () => import('./features/pagos/pago-list').then((m) => m.PagoListComponent),
+        path: 'sorteos',
+        loadComponent: () => import('./features/sorteos/sorteo-list').then((m) => m.SorteoListComponent),
+      },
+      {
+        path: 'bingos',
+        loadComponent: () =>
+          import('./features/bingos/bingo-list').then((m) => m.BingoListComponent),
+      },
+      {
+        path: 'loterias',
+        loadComponent: () =>
+          import('./features/loterias/loteria-list').then((m) => m.LoteriaListComponent),
+      },
+      {
+        path: 'ruletas',
+        loadComponent: () =>
+          import('./features/ruletas/ruleta-list').then((m) => m.RuletaListComponent),
       },
     ],
   },
