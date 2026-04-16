@@ -1,0 +1,59 @@
+<div class="login-page">
+  <mat-card class="login-card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Iniciar sesión</mat-card-title>
+      <mat-card-subtitle>
+        Acceso de demostración: solo se comprueba la existencia del usuario.
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (loading()) {
+        <div class="center">
+          <mat-spinner diameter="40" />
+        </div>
+      } @else if (usuarios().length === 0) {
+        <p class="hint">No hay usuarios. Crea el primero para acceder.</p>
+        <form [formGroup]="firstUserForm" (ngSubmit)="crearPrimero()" class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre completo</mat-label>
+            <input matInput formControlName="nombre_completo" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre de usuario</mat-label>
+            <input matInput formControlName="nombre_usuario" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="span-2">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Contraseña</mat-label>
+            <input matInput type="password" formControlName="clave" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Rol</mat-label>
+            <input matInput formControlName="rol" />
+          </mat-form-field>
+          <div class="span-2 actions">
+            <button mat-flat-button color="primary" type="submit">Crear y entrar</button>
+          </div>
+        </form>
+      } @else {
+        <form [formGroup]="loginForm" (ngSubmit)="ingresar()" class="login-form">
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Usuario</mat-label>
+            <input matInput formControlName="nombre_usuario" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Contraseña</mat-label>
+            <input matInput type="password" formControlName="clave" />
+          </mat-form-field>
+          <button mat-flat-button color="primary" type="submit" class="submit-btn">
+            Ingresar
+          </button>
+        </form>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

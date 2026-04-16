@@ -1,0 +1,79 @@
+<h2 mat-dialog-title>
+  <mat-icon color="primary">{{ data.mode === 'create' ? 'person_add' : 'manage_accounts' }}</mat-icon>
+  {{ data.mode === 'create' ? 'Nuevo Usuario' : 'Editar Usuario' }}
+</h2>
+
+<mat-dialog-content class="dialog-body">
+  <form [formGroup]="form" class="grid-form">
+    
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre Completo</mat-label>
+      <mat-icon matPrefix>badge</mat-icon>
+      <input matInput formControlName="nombre_completo" required />
+      @if (form.controls.nombre_completo.invalid && form.controls.nombre_completo.touched) {
+        <mat-error>El nombre es obligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre de Usuario</mat-label>
+      <mat-icon matPrefix>alternate_email</mat-icon>
+      <input matInput formControlName="nombre_usuario" autocomplete="username" required />
+      @if (form.controls.nombre_usuario.invalid && form.controls.nombre_usuario.touched) {
+        <mat-error>El usuario es obligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>Email</mat-label>
+      <mat-icon matPrefix>mail</mat-icon>
+      <input matInput type="email" formControlName="email" required />
+      @if (form.controls.email.errors?.['required'] && form.controls.email.touched) {
+        <mat-error>El email es obligatorio</mat-error>
+      }
+      @if (form.controls.email.errors?.['email'] && form.controls.email.touched) {
+        <mat-error>Formato de email inválido</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>Contraseña</mat-label>
+      <mat-icon matPrefix>key</mat-icon>
+      <input matInput type="password" formControlName="clave" />
+      @if (data.mode === 'edit') {
+        <mat-hint>Dejar vacío para no cambiar la clave</mat-hint>
+      } @else {
+        @if (form.controls.clave.invalid && form.controls.clave.touched) {
+          <mat-error>La clave debe tener al menos 4 caracteres</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rol</mat-label>
+      <mat-icon matPrefix>admin_panel_settings</mat-icon>
+      <input matInput formControlName="rol" required />
+      </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Teléfono</mat-label>
+      <mat-icon matPrefix>phone</mat-icon>
+      <input matInput formControlName="telefono" />
+    </mat-form-field>
+
+    <div class="span-2activo-row">
+      <mat-checkbox formControlName="activo" color="primary">¿Usuario Activo?</mat-checkbox>
+      @if (data.mode === 'edit') {
+        <span class="id-hint">ID: {{ data.row?.id_usuario | slice:0:8 }}...</span>
+      }
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancelar</button>
+  <button mat-flat-button color="primary" type="button" (click)="save()">
+    {{ data.mode === 'create' ? 'Crear' : 'Guardar Cambios' }}
+  </button>
+</mat-dialog-actions>
