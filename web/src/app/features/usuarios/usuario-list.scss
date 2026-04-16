@@ -1,0 +1,98 @@
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  
+  h1 {
+    margin: 0;
+    font: var(--mat-sys-title-large);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  gap: 16px;
+  color: var(--mat-sys-on-surface-variant);
+  
+  span {
+    font: var(--mat-sys-body-medium);
+  }
+}
+
+.table-wrap {
+  overflow: auto;
+  border-radius: 12px;
+  background-color: var(--mat-sys-surface);
+  
+  table {
+    width: 100%;
+    border-collapse: separate;
+  }
+}
+
+th.mat-header-cell {
+  background: color-mix(in srgb, var(--mat-sys-surface-container-high) 60%, var(--mat-sys-surface));
+  font: var(--mat-sys-label-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface);
+}
+
+tr.mat-row {
+  height: 56px;
+  
+  &:hover {
+    background-color: color-mix(in srgb, var(--mat-sys-primary) 5%, transparent) !important;
+  }
+}
+
+.mat-column-nombre_usuario {
+  font-weight: 600;
+  color: var(--mat-sys-primary);
+}
+
+.actions-cell {
+  white-space: nowrap;
+  text-align: right;
+  padding-right: 16px !important;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font: var(--mat-sys-label-small);
+  font-weight: 700;
+  text-transform: uppercase;
+  
+  &.rol-admin {
+    background-color: color-mix(in srgb, var(--mat-sys-tertiary) 12%, transparent);
+    color: var(--mat-sys-tertiary);
+  }
+  
+  &.rol-usuario {
+    background-color: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+    color: var(--mat-sys-primary);
+  }
+}
+
+mat-icon {
+  &.active {
+    color: #2e7d32; 
+  }
+  &.inactive {
+    color: var(--mat-sys-error);
+  }
+}
+
+.mat-paginator {
+  background-color: transparent !important;
+  border-top: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 45%, transparent);
+}
