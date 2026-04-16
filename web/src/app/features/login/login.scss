@@ -1,0 +1,55 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: var(--mat-sys-surface);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-page::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  background: 
+    radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--mat-sys-primary) 15%, transparent) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--mat-sys-tertiary) 10%, transparent) 0%, transparent 40%);
+  animation: orbit 30s linear infinite;
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.login-card {
+  width: 100%;
+  max-width: 480px;
+  z-index: 1;
+  border-radius: 28px !important;
+}
+
+.center { display: flex; justify-content: center; padding: 20px; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.span-2 { grid-column: 1 / -1; }
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full { width: 100%; }
+
+.submit-btn {
+  padding: 12px !important;
+  border-radius: 16px !important;
+}
