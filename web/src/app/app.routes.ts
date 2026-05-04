@@ -22,7 +22,7 @@ export const routes: Routes = [
       {
         path: 'billeteras',
         loadComponent: () =>
-          import('./features/billeteras/billetera-list').then((m) => m.BilleteraListComponent),
+          import('./features/billetera/billetera-list').then((m) => m.BilleteraListComponent),
       },
       {
         path: 'apuestas',
