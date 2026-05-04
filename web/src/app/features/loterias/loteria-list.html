@@ -1,0 +1,122 @@
+<!-- ═══ PANEL DE JUEGO ════════════════════════════════════════ -->
+<div class="game-panel mat-elevation-z2">
+  <div class="game-header">
+    <mat-icon>confirmation_number</mat-icon>
+    <div>
+      <h2>Nueva Lotería</h2>
+      <p>Ingresa 4 dígitos y descubre si ganaste</p>
+    </div>
+  </div>
+
+  <form [formGroup]="gameForm" class="digit-row">
+    <input class="digit-box" formControlName="d1" maxlength="1" type="text"
+           inputmode="numeric" placeholder="·"
+           (input)="onDigitInput($event, d2)" #d1 />
+    <input class="digit-box" formControlName="d2" maxlength="1" type="text"
+           inputmode="numeric" placeholder="·"
+           (input)="onDigitInput($event, d3)" #d2 />
+    <input class="digit-box" formControlName="d3" maxlength="1" type="text"
+           inputmode="numeric" placeholder="·"
+           (input)="onDigitInput($event, d4)" #d3 />
+    <input class="digit-box" formControlName="d4" maxlength="1" type="text"
+           inputmode="numeric" placeholder="·" #d4 />
+
+    <button mat-flat-button color="primary" type="button"
+            (click)="jugar()" [disabled]="playing()">
+      @if (playing()) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        <mat-icon>play_arrow</mat-icon>
+        Jugar
+      }
+    </button>
+  </form>
+
+  @if (gameResult()) {
+    <div class="result-panel" [class.won]="gameResult()!.won" [class.lost]="!gameResult()!.won">
+      <div class="numbers-compare">
+        <div class="number-group">
+          <span class="label">Tu número</span>
+          <div class="digits">
+            @for (d of gameResult()!.userNumber.split(''); track $index) {
+              <span class="digit" [class.match]="d === gameResult()!.winningNumber[$index]">{{ d }}</span>
+            }
+          </div>
+        </div>
+        <mat-icon class="vs-icon">compare_arrows</mat-icon>
+        <div class="number-group">
+          <span class="label">Número ganador</span>
+          <div class="digits">
+            @for (d of gameResult()!.winningNumber.split(''); track $index) {
+              <span class="digit winning">{{ d }}</span>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="result-message">
+        @if (gameResult()!.won) {
+          <mat-icon>emoji_events</mat-icon>
+          <span>¡Ganaste! Premio: {{ gameResult()!.recompensa | currency:'COP':'symbol':'1.0-0' }}</span>
+        } @else {
+          <mat-icon>sentiment_dissatisfied</mat-icon>
+          <span>¡Perdiste! Mejor suerte la próxima vez.</span>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<!-- ═══ REGISTROS ════════════════════════════════════════════ -->
+<div class="page-head">
+  <h1>Loterías registradas</h1>
+  <button mat-stroked-button color="primary" type="button" (click)="nueva()">
+    <mat-icon>add</mat-icon>
+    Agregar manual
+  </button>
+</div>
+
+@if (loading) {
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Cargando loterías...</span>
+  </div>
+} @else {
+  <div class="table-wrap mat-elevation-z2">
+    <table mat-table [dataSource]="dataSource">
+
+      <ng-container matColumnDef="numero_jugado">
+        <th mat-header-cell *matHeaderCellDef>Número Ganador</th>
+        <td mat-cell *matCellDef="let r">{{ r.numero_jugado }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="costo_entrada">
+        <th mat-header-cell *matHeaderCellDef>Costo Entrada</th>
+        <td mat-cell *matCellDef="let r">{{ r.costo_entrada | currency:'COP':'symbol':'1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="recompensa">
+        <th mat-header-cell *matHeaderCellDef>Recompensa</th>
+        <td mat-cell *matCellDef="let r" class="recompensa-cell">
+          {{ r.recompensa | currency:'COP':'symbol':'1.2-2' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let r" class="actions-cell">
+          <button mat-icon-button type="button" color="accent" (click)="editar(r)" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" color="warn" (click)="eliminar(r)" aria-label="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+  </div>
+}

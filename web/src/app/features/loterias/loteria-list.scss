@@ -1,0 +1,220 @@
+// ── Panel de juego ────────────────────────────────────────────
+.game-panel {
+  border-radius: 16px;
+  background: var(--mat-sys-surface-container-low);
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: var(--mat-sys-primary);
+  }
+
+  h2 {
+    margin: 0;
+    font: var(--mat-sys-title-medium);
+    font-weight: 700;
+  }
+
+  p {
+    margin: 2px 0 0;
+    font: var(--mat-sys-body-small);
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.digit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.digit-box {
+  width: 64px;
+  height: 72px;
+  border: 2px solid var(--mat-sys-outline);
+  border-radius: 12px;
+  background: var(--mat-sys-surface);
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--mat-sys-on-surface);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+
+  &:focus {
+    border-color: var(--mat-sys-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mat-sys-primary) 20%, transparent);
+  }
+
+  &::placeholder {
+    color: var(--mat-sys-outline);
+  }
+}
+
+// ── Resultado ────────────────────────────────────────────────
+.result-panel {
+  margin-top: 24px;
+  border-radius: 12px;
+  padding: 20px 24px;
+  border: 2px solid;
+  transition: all 0.3s;
+
+  &.won {
+    background: color-mix(in srgb, #2e7d32 8%, transparent);
+    border-color: #2e7d32;
+  }
+
+  &.lost {
+    background: color-mix(in srgb, var(--mat-sys-error) 8%, transparent);
+    border-color: var(--mat-sys-error);
+  }
+}
+
+.numbers-compare {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.number-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .label {
+    font: var(--mat-sys-label-small);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.digits {
+  display: flex;
+  gap: 6px;
+}
+
+.digit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 48px;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface);
+
+  &.match {
+    background: color-mix(in srgb, #2e7d32 15%, transparent);
+    color: #2e7d32;
+  }
+
+  &.winning {
+    background: color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
+    color: var(--mat-sys-primary);
+  }
+}
+
+.vs-icon {
+  color: var(--mat-sys-outline);
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.result-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: var(--mat-sys-title-small);
+  font-weight: 600;
+
+  .won & {
+    color: #2e7d32;
+    mat-icon { color: #2e7d32; }
+  }
+
+  .lost & {
+    color: var(--mat-sys-error);
+    mat-icon { color: var(--mat-sys-error); }
+  }
+}
+
+// ── Tabla de registros ────────────────────────────────────────
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font: var(--mat-sys-title-large);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  gap: 16px;
+  color: var(--mat-sys-on-surface-variant);
+
+  span { font: var(--mat-sys-body-medium); }
+}
+
+.table-wrap {
+  overflow: auto;
+  border-radius: 12px;
+  background-color: var(--mat-sys-surface);
+
+  table { width: 100%; }
+}
+
+th.mat-header-cell {
+  background: color-mix(in srgb, var(--mat-sys-surface-container-high) 60%, var(--mat-sys-surface));
+  font: var(--mat-sys-label-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+tr.mat-row {
+  height: 56px;
+  &:hover { background-color: color-mix(in srgb, var(--mat-sys-primary) 5%, transparent) !important; }
+}
+
+.recompensa-cell {
+  font-weight: 600;
+  color: var(--mat-sys-primary);
+}
+
+.actions-cell {
+  white-space: nowrap;
+  text-align: right;
+  padding-right: 16px !important;
+}
+
+.mat-paginator {
+  background-color: transparent !important;
+  border-top: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 45%, transparent);
+}
