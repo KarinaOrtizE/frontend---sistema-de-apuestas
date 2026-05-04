@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>{{ data.mode === 'create' ? 'Nuevo Sorteo' : 'Editar Sorteo' }}</h2>
+<mat-dialog-content class="dialog-body">
+  <form [formGroup]="form" class="grid">
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>Fecha del Sorteo</mat-label>
+      <input matInput type="datetime-local" formControlName="fecha_sorteo" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>Lotería (opcional)</mat-label>
+      <mat-select formControlName="id_loteria">
+        <mat-option [value]="null">— Ninguna —</mat-option>
+        @for (l of loterias(); track l.id_loteria) {
+          <mat-option [value]="l.id_loteria">{{ l.numero_jugado }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancelar</button>
+  <button mat-flat-button color="primary" type="button" (click)="save()">Guardar</button>
+</mat-dialog-actions>
