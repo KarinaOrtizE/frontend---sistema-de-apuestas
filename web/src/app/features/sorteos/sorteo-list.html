@@ -1,0 +1,51 @@
+<div class="page-head">
+  <h1>Sorteos</h1>
+  <button mat-flat-button color="primary" type="button" (click)="nuevo()">
+    <mat-icon>add</mat-icon>
+    Nuevo Sorteo
+  </button>
+</div>
+
+@if (loading) {
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Cargando sorteos...</span>
+  </div>
+} @else {
+  <div class="table-wrap mat-elevation-z2">
+    <table mat-table [dataSource]="dataSource">
+
+      <ng-container matColumnDef="id_sorteo">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let r">{{ shortId(r.id_sorteo) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fecha_sorteo">
+        <th mat-header-cell *matHeaderCellDef>Fecha del Sorteo</th>
+        <td mat-cell *matCellDef="let r">{{ r.fecha_sorteo | date:'medium' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="id_loteria">
+        <th mat-header-cell *matHeaderCellDef>Lotería</th>
+        <td mat-cell *matCellDef="let r">{{ r.id_loteria ? shortId(r.id_loteria) : '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let r" class="actions-cell">
+          <button mat-icon-button type="button" color="accent" (click)="editar(r)" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" color="warn" (click)="eliminar(r)" aria-label="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+  </div>
+}
