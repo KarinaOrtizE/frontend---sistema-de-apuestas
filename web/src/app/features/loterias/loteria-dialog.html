@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>{{ data.mode === 'create' ? 'Nueva Lotería' : 'Editar Lotería' }}</h2>
+<mat-dialog-content class="dialog-body">
+  <form [formGroup]="form" class="grid">
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>Número Jugado</mat-label>
+      <input matInput formControlName="numero_jugado" placeholder="Ej: 1234" maxlength="4" />
+      <mat-hint>Exactamente 4 dígitos (0–9)</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Costo de Entrada</mat-label>
+      <input matInput type="number" formControlName="costo_entrada" min="0.01" step="0.01" />
+      <span matTextPrefix>$&nbsp;</span>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Recompensa</mat-label>
+      <input matInput type="number" formControlName="recompensa" min="0.01" step="0.01" />
+      <span matTextPrefix>$&nbsp;</span>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancelar</button>
+  <button mat-flat-button color="primary" type="button" (click)="save()">Guardar</button>
+</mat-dialog-actions>
