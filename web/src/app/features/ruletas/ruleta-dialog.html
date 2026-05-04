@@ -1,0 +1,100 @@
+<h2 mat-dialog-title>
+  {{ data.mode === 'create' ? 'Nueva Ruleta' : 'Editar Ruleta' }}
+</h2>
+
+<mat-dialog-content class="dialog-body">
+  <form [formGroup]="form" class="grid-form">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Número</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="numero"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Color</mat-label>
+      <mat-select formControlName="color">
+        @for (c of colores(); track c) {
+          <mat-option [value]="c">
+            {{ c }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Paridad</mat-label>
+      <mat-select formControlName="paridad">
+        @for (p of paridades(); track p) {
+          <mat-option [value]="p">
+            {{ p }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rango</mat-label>
+      <mat-select formControlName="rango">
+        @for (r of rangos(); track r) {
+          <mat-option [value]="r">
+            {{ r }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Costo Entrada</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="costo_entrada"
+      />
+
+      @if (form.controls.costo_entrada.hasError('required')) {
+        <mat-error>
+          El costo es obligatorio
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Recompensa</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="recompensa"
+      />
+
+      @if (form.controls.recompensa.hasError('required')) {
+        <mat-error>
+          La recompensa es obligatoria
+        </mat-error>
+      }
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button
+    mat-stroked-button
+    type="button"
+    (click)="cancel()"
+  >
+    Cancelar
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="save()"
+  >
+    {{ data.mode === 'create' ? 'Crear' : 'Guardar' }}
+  </button>
+</mat-dialog-actions>
