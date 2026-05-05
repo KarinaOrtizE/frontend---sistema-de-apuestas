@@ -1,0 +1,46 @@
+<div class="page-head">
+  <h1>Gestión de Métodos Pago</h1>
+  <button mat-flat-button color="primary" type="button" (click)="nuevo()">
+    <mat-icon>add</mat-icon>
+    Nuevo Método Pago
+  </button>
+</div>
+
+@if (loading) {
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Cargando métodos pago...</span>
+  </div>
+} @else {
+  <div class="table-wrap mat-elevation-z2">
+    <table mat-table [dataSource]="dataSource" matSort>
+      
+      <ng-container matColumnDef="tipo_metodo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+        <td mat-cell *matCellDef="let r">{{ r.tipo_metodo }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre_titular">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Titular</th>
+        <td mat-cell *matCellDef="let r">{{ r.nombre_titular }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let r" class="actions-cell">
+          <button mat-icon-button type="button" color="accent" (click)="editar(r)" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" color="warn" (click)="eliminar(r)" aria-label="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    
+    <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+}
