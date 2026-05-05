@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +29,7 @@ export interface ApuestaDialogData {
     MatInputModule,
     MatSelectModule,
     MatSnackBarModule,
+    CommonModule,
   ],
   templateUrl: './apuesta-dialog.html',
 })
@@ -39,7 +41,6 @@ export class ApuestaDialogComponent implements OnInit {
 
   readonly data = inject<ApuestaDialogData>(MAT_DIALOG_DATA);
 
-  // Exponemos el enum de estados para el template
   readonly estados = signal(Object.values(EstadoApuesta));
 
   readonly form = this.fb.nonNullable.group({
@@ -47,7 +48,6 @@ export class ApuestaDialogComponent implements OnInit {
     id_sorteo: ['', [Validators.required]],
     monto_apostado: [0, [Validators.required, Validators.min(0.01)]],
     estado: [EstadoApuesta.PENDIENTE as EstadoApuesta, [Validators.required]],
-    // Campos de auditoría requeridos por la API
     id_usuario_creador_o_editor: ['', [Validators.required]], 
   });
 
