@@ -227,8 +227,6 @@ export interface UsuarioUpdate {
 
 export interface UsuarioRead {
     id_usuario: UUID;
-    nombre: string;
-    username: string;
     email: string;
     rol: string;
     activo: boolean;
