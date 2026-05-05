@@ -15,6 +15,15 @@
   <div class="table-wrap mat-elevation-z2">
     <table mat-table [dataSource]="dataSource" matSort>
 
+      <ng-container matColumnDef="carton">
+        <th mat-header-cell *matHeaderCellDef>Cartón</th>
+        <td mat-cell *matCellDef="let r">
+          <button mat-stroked-button type="button" (click)="verCarton(r)" aria-label="Ver cartón">
+            <mat-icon>grid_on</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="aciertos">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Aciertos</th>
         <td mat-cell *matCellDef="let r">

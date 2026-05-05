@@ -92,3 +92,44 @@ tr.mat-row {
   background-color: transparent !important;
   border-top: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 45%, transparent);
 }
+
+.carton-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+
+  th {
+    background: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
+    text-align: center;
+    padding: 8px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 40%, transparent);
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.15s;
+
+    &:hover { background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent); }
+
+    &.free {
+      background: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: default;
+    }
+
+    &.marked {
+      background: color-mix(in srgb, var(--mat-sys-tertiary) 15%, transparent);
+      color: var(--mat-sys-tertiary);
+      font-weight: 600;
+    }
+  }
+}

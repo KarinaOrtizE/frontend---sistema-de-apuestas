@@ -37,11 +37,19 @@ export class BingoListComponent implements AfterViewInit {
   private readonly snack = inject(MatSnackBar);
 
   readonly displayedColumns = [
+    'carton',
     'aciertos',
     'costo_entrada',
     'recompensa',
     'acciones',
   ];
+
+  verCarton(row: BingoRead): void {
+  this.dialog.open(BingoDialogComponent, {
+    width: '500px',
+    data: { mode: 'carton', row }
+  });
+}
 
   readonly dataSource = new MatTableDataSource<BingoRead>([]);
 

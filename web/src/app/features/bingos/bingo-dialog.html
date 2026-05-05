@@ -1,54 +1,89 @@
-<h2 mat-dialog-title>
-  <mat-icon color="primary">
-    {{ data.mode === 'create' ? 'add_chart' : 'edit_note' }}
-  </mat-icon>
-  {{ data.mode === 'create' ? 'Nuevo Bingo' : 'Editar Bingo' }}
-</h2>
+@if (data.mode === 'carton') {
+  <h2 mat-dialog-title>
+    <mat-icon color="primary">grid_on</mat-icon>
+    Cartón — {{ data.row?.id_bingo | slice:0:8 }}...
+  </h2>
+  <mat-dialog-content>
+    <table class="carton-table">
+      <thead>
+        <tr>
+          @for (l of letters; track l) {
+            <th>{{ l }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of [0,1,2,3,4]; track row) {
+          <tr>
+            @for (col of [0,1,2,3,4]; track col) {
+              <td [class.free]="isFree(col, row)"
+                  [class.marked]="marked[col][row]"
+                  (click)="toggleCell(col, row)">
+                {{ isFree(col, row) ? 'FREE' : getCell(col, row) }}
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="resetMarks()">Limpiar</button>
+    <button mat-flat-button color="primary" type="button" (click)="cancel()">Cerrar</button>
+  </mat-dialog-actions>
+} @else {
+  <h2 mat-dialog-title>
+    <mat-icon color="primary">
+      {{ data.mode === 'create' ? 'add_chart' : 'edit_note' }}
+    </mat-icon>
+    {{ data.mode === 'create' ? 'Nuevo Bingo' : 'Editar Bingo' }}
+  </h2>
 
-<mat-dialog-content class="dialog-body">
-  <form [formGroup]="form" class="grid-form">
+  <mat-dialog-content class="dialog-body">
+    <form [formGroup]="form" class="grid-form">
 
-    <mat-form-field appearance="outline">
-      <mat-label>Aciertos</mat-label>
-      <mat-icon matPrefix>check_circle</mat-icon>
-      <input matInput type="number" formControlName="aciertos" required />
-      @if (form.controls.aciertos.invalid && form.controls.aciertos.touched) {
-        <mat-error>Los aciertos deben ser 0 o mayores</mat-error>
-      }
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Aciertos</mat-label>
+        <mat-icon matPrefix>check_circle</mat-icon>
+        <input matInput type="number" formControlName="aciertos" required />
+        @if (form.controls.aciertos.invalid && form.controls.aciertos.touched) {
+          <mat-error>Los aciertos deben ser 0 o mayores</mat-error>
+        }
+      </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Costo de Entrada</mat-label>
-      <mat-icon matPrefix>payments</mat-icon>
-      <input matInput type="number" formControlName="costo_entrada" required />
-      @if (form.controls.costo_entrada.invalid && form.controls.costo_entrada.touched) {
-        <mat-error>El costo debe ser válido</mat-error>
-      }
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Costo de Entrada</mat-label>
+        <mat-icon matPrefix>payments</mat-icon>
+        <input matInput type="number" formControlName="costo_entrada" required />
+        @if (form.controls.costo_entrada.invalid && form.controls.costo_entrada.touched) {
+          <mat-error>El costo debe ser válido</mat-error>
+        }
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="span-2">
-      <mat-label>Recompensa</mat-label>
-      <mat-icon matPrefix>emoji_events</mat-icon>
-      <input matInput type="number" formControlName="recompensa" required />
-      @if (form.controls.recompensa.invalid && form.controls.recompensa.touched) {
-        <mat-error>La recompensa debe ser válida</mat-error>
-      }
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label>Recompensa</mat-label>
+        <mat-icon matPrefix>emoji_events</mat-icon>
+        <input matInput type="number" formControlName="recompensa" required />
+        @if (form.controls.recompensa.invalid && form.controls.recompensa.touched) {
+          <mat-error>La recompensa debe ser válida</mat-error>
+        }
+      </mat-form-field>
 
-    <div class="span-2 activo-row">
-      @if (data.mode === 'edit') {
-        <span class="id-hint">
-          ID: {{ data.row?.id_bingo | slice:0:8 }}...
-        </span>
-      }
-    </div>
+      <div class="span-2 activo-row">
+        @if (data.mode === 'edit') {
+          <span class="id-hint">
+            ID: {{ data.row?.id_bingo | slice:0:8 }}...
+          </span>
+        }
+      </div>
 
-  </form>
-</mat-dialog-content>
+    </form>
+  </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-button type="button" (click)="cancel()">Cancelar</button>
-  <button mat-flat-button color="primary" type="button" (click)="save()">
-    {{ data.mode === 'create' ? 'Crear' : 'Guardar Cambios' }}
-  </button>
-</mat-dialog-actions>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Cancelar</button>
+    <button mat-flat-button color="primary" type="button" (click)="save()">
+      {{ data.mode === 'create' ? 'Crear' : 'Guardar Cambios' }}
+    </button>
+  </mat-dialog-actions>
+}

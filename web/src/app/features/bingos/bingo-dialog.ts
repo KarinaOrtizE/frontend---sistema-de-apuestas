@@ -13,7 +13,7 @@ import { BingoService } from '../../core/services/bingo.service';
 import { BingoRead, BingoUpdate } from '../../models/api.models';
 
 export interface BingoDialogData {
-  mode: 'create' | 'edit';
+  mode: 'create' | 'edit' | 'carton';  // ← añadir 'carton'
   row?: BingoRead;
 }
 
@@ -46,6 +46,10 @@ export class BingoDialogComponent {
     recompensa: [250000, [Validators.required, Validators.min(0)]],
   });
 
+  readonly letters = ['B', 'I', 'N', 'G', 'O'];
+  marked: boolean[][] = Array.from({ length: 5 }, () => Array(5).fill(false));
+
+  
   constructor() {
     if (this.data.mode === 'edit' && this.data.row) {
       const r = this.data.row;
@@ -55,6 +59,27 @@ export class BingoDialogComponent {
         recompensa: r.recompensa,
       });
     }
+    if (this.data.mode === 'carton') {
+      this.marked[2][2] = true; // FREE center
+    }
+  }
+
+  toggleCell(col: number, row: number): void {
+    if (col === 2 && row === 2) return;
+    this.marked[col][row] = !this.marked[col][row];
+  }
+
+  getCell(col: number, row: number): number {
+    return this.data.row!.carton_json[row][col];
+  }
+
+  isFree(col: number, row: number): boolean {
+    return col === 2 && row === 2;
+  }
+
+  resetMarks(): void {
+    this.marked = Array.from({ length: 5 }, () => Array(5).fill(false));
+    this.marked[2][2] = true;
   }
 
   cancel(): void {
