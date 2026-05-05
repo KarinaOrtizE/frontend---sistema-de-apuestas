@@ -62,7 +62,11 @@ export class LoteriaDialogComponent {
       this.form.markAllAsTouched();
       return;
     }
-    const v = this.form.getRawValue();
+    const v = {
+      ...this.form.getRawValue(),
+      costo_entrada: Number(this.form.value.costo_entrada),
+      recompensa: Number(this.form.value.recompensa),
+    };
 
     if (this.data.mode === 'create') {
       this.svc.create(v).subscribe({
