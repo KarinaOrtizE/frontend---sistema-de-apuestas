@@ -1,143 +1,136 @@
-<div class="page-head">
-  <h1>Gestión de Ruletas</h1>
+<div class="ruleta-page">
 
-  <button
-    mat-flat-button
-    color="primary"
-    type="button"
-    (click)="nuevo()"
-  >
-    <mat-icon>add</mat-icon>
-    Nueva Ruleta
-  </button>
+  <!-- ── Panel izquierdo: la ruleta ── -->
+  <div class="wheel-panel">
+    <div class="wheel-title">
+      <span class="wheel-title-main">RULETA</span>
+      <span class="wheel-title-sub">Casino</span>
+    </div>
+
+    <div class="wheel-outer">
+      <div class="wheel-pointer">▼</div>
+      <canvas
+        #wheelCanvas
+        class="wheel-canvas"
+        width="400"
+        height="400"
+        (click)="spinWheel()"
+      ></canvas>
+      <div class="wheel-center-btn" (click)="spinWheel()" [class.spinning]="isSpinning">
+        <span *ngIf="!isSpinning">GIRAR</span>
+        <span *ngIf="isSpinning">...</span>
+      </div>
+    </div>
+
+    <div class="result-badge" [class.visible]="lastResult !== null" [attr.data-color]="lastResult?.color">
+      @if (lastResult) {
+        <span class="result-num">{{ lastResult.numero }}</span>
+        <span class="result-info">{{ lastResult.color | titlecase }} · {{ lastResult.paridad | titlecase }}</span>
+      }
+    </div>
+  </div>
+
+  <!-- ── Panel derecho: gestión ── -->
+  <div class="manage-panel">
+
+    <div class="manage-header">
+      <div>
+        <h1 class="manage-title">Gestión</h1>
+        <p class="manage-sub">Configuración de ruletas</p>
+      </div>
+      <button
+        mat-flat-button
+        class="btn-nuevo"
+        type="button"
+        (click)="nuevo()"
+      >
+        <mat-icon>add</mat-icon>
+        Nueva
+      </button>
+    </div>
+
+    @if (loading) {
+      <div class="loading-container">
+        <mat-spinner diameter="36"></mat-spinner>
+        <span>Cargando...</span>
+      </div>
+    } @else {
+
+      <div class="cards-list">
+        @for (r of dataSource.data; track r.id_ruleta) {
+          <div class="ruleta-card">
+            <div class="card-left">
+              <div
+                class="card-num"
+                [style.background]="getBallColor(r.eleccion_usuario?.numero)"
+              >
+                {{ r.eleccion_usuario?.numero ?? '?' }}
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="card-badges">
+                @if (r.eleccion_usuario?.color) {
+                  <span class="badge" [attr.data-color]="r.eleccion_usuario?.color">
+                    {{ r.eleccion_usuario?.color }}
+                  </span>
+                }
+                @if (r.eleccion_usuario?.paridad) {
+                  <span class="badge badge-neutral">{{ r.eleccion_usuario?.paridad }}</span>
+                }
+                @if (r.eleccion_usuario?.rango) {
+                  <span class="badge badge-neutral">{{ r.eleccion_usuario?.rango }}</span>
+                }
+              </div>
+              <div class="card-amounts">
+                <span class="amount-cost">
+                  <mat-icon class="amt-icon">payments</mat-icon>
+                  {{ r.costo_entrada | currency:'USD':'symbol':'1.0-0' }}
+                </span>
+                <span class="amount-reward">
+                  <mat-icon class="amt-icon">emoji_events</mat-icon>
+                  {{ r.recompensa | currency:'USD':'symbol':'1.0-0' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <button
+                mat-icon-button
+                type="button"
+                class="btn-edit"
+                (click)="editar(r)"
+                aria-label="Editar"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                type="button"
+                class="btn-delete"
+                (click)="eliminar(r)"
+                aria-label="Eliminar"
+              >
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (dataSource.data.length === 0) {
+          <div class="empty-state">
+            <mat-icon>casino</mat-icon>
+            <p>No hay ruletas configuradas</p>
+            <button mat-stroked-button (click)="nuevo()">Crear primera ruleta</button>
+          </div>
+        }
+      </div>
+
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 25]"
+        showFirstLastButtons
+      ></mat-paginator>
+
+    }
+  </div>
 </div>
-
-@if (loading) {
-
-  <div class="loading-container">
-    <mat-spinner diameter="40"></mat-spinner>
-    <span>Cargando ruletas...</span>
-  </div>
-
-} @else {
-
-  <div class="table-wrap mat-elevation-z2">
-
-    <table
-      mat-table
-      [dataSource]="dataSource"
-      matSort
-    >
-
-      <ng-container matColumnDef="numero">
-        <th mat-header-cell *matHeaderCellDef>
-          Número
-        </th>
-
-        <td mat-cell *matCellDef="let r">
-          {{ r.eleccion_usuario?.numero ?? '-' }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="color">
-        <th mat-header-cell *matHeaderCellDef>
-          Color
-        </th>
-
-        <td mat-cell *matCellDef="let r">
-          {{ r.eleccion_usuario?.color ?? '-' }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="paridad">
-        <th mat-header-cell *matHeaderCellDef>
-          Paridad
-        </th>
-
-        <td mat-cell *matCellDef="let r">
-          {{ r.eleccion_usuario?.paridad ?? '-' }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="rango">
-        <th mat-header-cell *matHeaderCellDef>
-          Rango
-        </th>
-
-        <td mat-cell *matCellDef="let r">
-          {{ r.eleccion_usuario?.rango ?? '-' }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="costo_entrada">
-        <th mat-header-cell *matHeaderCellDef>
-          Costo Entrada
-        </th>
-
-        <td mat-cell *matCellDef="let r">
-          {{ r.costo_entrada }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="recompensa">
-        <th mat-header-cell *matHeaderCellDef>
-          Recompensa
-        </th>
-
-        <td mat-cell *matCellDef="let r">
-          {{ r.recompensa }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef>
-        </th>
-
-        <td
-          mat-cell
-          *matCellDef="let r"
-          class="actions-cell"
-        >
-          <button
-            mat-icon-button
-            type="button"
-            color="accent"
-            (click)="editar(r)"
-            aria-label="Editar"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            type="button"
-            color="warn"
-            (click)="eliminar(r)"
-            aria-label="Eliminar"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-
-      <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns; sticky: true"
-      ></tr>
-
-      <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns"
-      ></tr>
-
-    </table>
-
-    <mat-paginator
-      [pageSizeOptions]="[10, 25, 50, 100]"
-      showFirstLastButtons
-    >
-    </mat-paginator>
-
-  </div>
-
-}
