@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { filter } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 
 import { UsuarioService } from '../../core/services/usuario.service';
 import { UsuarioRead } from '../../models/api.models';
@@ -24,6 +25,7 @@ import { UsuarioDialogComponent, UsuarioDialogData } from './usuario-dialog';
     MatDialogModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    CommonModule,
   ],
   templateUrl: './usuario-list.html',
   styleUrl: './usuario-list.scss',

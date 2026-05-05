@@ -27,7 +27,7 @@ export const routes: Routes = [
       {
         path: 'apuestas',
         loadComponent: () =>
-          import('./features/apuestas/apuesta-list').then((m) => m.ApuestaListComponent),
+          import('./features/apuesta/apuesta-list').then((m) => m.ApuestaListComponent),
       },
       {
         path: 'metodos-pago',

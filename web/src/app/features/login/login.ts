@@ -10,7 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuditContextService } from '../../core/audit-context.service';
-import { UsuarioService } from '../../core/services/usuario.service';
+import { UsuarioService } from '../../core/services/usuario.service'; 
 import { UsuarioRead } from '../../models/api.models';
 
 @Component({
@@ -101,7 +101,7 @@ export class LoginComponent implements OnInit {
         email: v.email,
         clave: v.clave,
         rol: v.rol,
-        telefono: v.telefono || null,
+        telefono: v.telefono || undefined,
         activo: true,
       })
       .subscribe({

@@ -6,6 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 import { BingoService } from '../../core/services/bingo.service';
 import { BingoRead, BingoUpdate } from '../../models/api.models';
@@ -25,6 +27,8 @@ export interface BingoDialogData {
     MatFormFieldModule,
     MatInputModule,
     MatSnackBarModule,
+    CommonModule,
+    MatIconModule,
   ],
   templateUrl: './bingo-dialog.html',
 })
