@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>{{ data.mode === 'create' ? 'Nuevo Método Pago' : 'Editar Método Pago' }}</h2>
+
+<mat-dialog-content class="dialog-body">
+  <form [formGroup]="form" class="grid-form">
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>Tipo de Método</mat-label>
+      <input matInput formControlName="tipo_metodo" placeholder="Ej: Tarjeta de Crédito" required />
+      @if (form.controls.tipo_metodo.invalid && form.controls.tipo_metodo.touched){
+        <mat-error>El tipo de método es obligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>Nombre del Titular</mat-label>
+      <input matInput formControlName="nombre_titular" required />
+      @if (form.controls.nombre_titular.invalid && form.controls.nombre_titular.touched){
+        <mat-error>El nombre del titular es obligatorio</mat-error>
+      }
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="guardar()" [disabled]="form.invalid">Guardar</button>
+</mat-dialog-actions>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancelar</button>
+  <button mat-flat-button color="primary" type="button" (click)="save()">
+    {{ data.mode === 'create' ? 'Crear' : 'Guardar Cambios' }}
+  </button>
+</mat-dialog-actions>
