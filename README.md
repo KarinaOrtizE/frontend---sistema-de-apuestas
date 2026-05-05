@@ -1,6 +1,6 @@
-# Frontend — Programación de software
+# Frontend — Sistema de Apuestas
 
-Cliente web en **Angular** con **Angular Material** que consume la API REST del backend **FastAPI** (`backend-programacion-software`). Incluye **login de demostración**, **layout con menú lateral colapsable** y **CRUD** por cada entidad expuesta en el API.
+Cliente web en **Angular** con **Angular Material** que consume la API REST del backend **FastAPI** (`backend-sistema-de-apuestas`). Incluye **login de demostración**, **layout con menú lateral colapsable** y **CRUD** por cada entidad expuesta en el API.
 
 ---
 
@@ -17,16 +17,9 @@ Cliente web en **Angular** con **Angular Material** que consume la API REST del 
 9. [Arquitectura de la aplicación Angular](#arquitectura-de-la-aplicación-angular)
 10. [Rutas y navegación](#rutas-y-navegación)
 11. [Componentes y convenciones](#componentes-y-convenciones)
-12. [Anatomía de un componente Angular (`.ts`, `.html`, `.scss`)](#anatomía-de-un-componente-angular-ts-html-scss)
-13. [El archivo TypeScript del componente](#el-archivo-typescript-del-componente)
-14. [La plantilla HTML](#la-plantilla-html)
-15. [Estilos: global vs por componente (SCSS)](#estilos-global-vs-por-componente-scss)
-16. [Tema Material y `styles.scss`](#tema-material-y-stylesscss)
 17. [Ejemplo de flujo: lista CRUD](#ejemplo-de-flujo-lista-crud)
 18. [Servicios HTTP y modelos](#servicios-http-y-modelos)
 19. [Autenticación y usuario de auditoría](#autenticación-y-usuario-de-auditoría)
-20. [Integración con el backend (CORS)](#integración-con-el-backend-cors)
-21. [Problemas frecuentes](#problemas-frecuentes)
 
 ---
 
@@ -57,13 +50,12 @@ Comprueba versiones:
 node -v
 npm -v
 ```
-
 ---
 
 ## Estructura de carpetas del repositorio
 
 ```
-frontend-programacion-de-software/          ← Raíz del repo (scripts npm cómodos)
+frontend---sistema-de-apuestas/          ← Raíz del repo (scripts npm cómodos)
 ├── package.json                            ← Delega start/build/test a web/
 ├── README.md                               ← Este archivo
 └── web/                                    ← Proyecto Angular real
@@ -95,11 +87,14 @@ frontend-programacion-de-software/          ← Raíz del repo (scripts npm cóm
     │           ├── login/                  ← Pantalla de acceso
     │           ├── shell/                  ← Layout: sidenav + toolbar + outlet
     │           ├── usuarios/               ← Lista + diálogo CRUD
-    │           ├── categorias/
-    │           ├── productos/
-    │           ├── pedidos/
-    │           ├── detalles-pedido/
-    │           └── pagos/
+    │           ├── apuestas/
+    │           ├── billetera/
+    │           ├── bingos/
+    │           ├── loterias/
+    │           ├── metodos-pago/
+    │           ├── ruletas/
+    │           ├── sorteos/
+    │           └── transacciones/
     └── public/
         └── favicon.ico
 ```
@@ -118,15 +113,15 @@ Cada carpeta bajo **`features/<entidad>/`** sigue el mismo patrón:
 Si el proyecto está en un servidor Git:
 
 ```bash
-git clone <URL-del-repositorio> frontend-programacion-de-software
-cd frontend-programacion-de-software
+git clone <URL-del-repositorio> frontend---sistema-de-apuestas
+cd frontend---sistema-de-apuestas
 ```
 
 ### Opción B — Copiar carpeta (USB, zip, Drive)
 
-1. Copia toda la carpeta **`frontend-programacion-de-software`** (incluyendo **`web/`**).
+1. Copia toda la carpeta **`frontend---sistema-de-apuestas`** (incluyendo **`web/`**).
 2. No hace falta copiar **`web/node_modules`** si vas a ejecutar `npm install` de nuevo (recomendado).
-3. Abre una terminal en **`frontend-programacion-de-software`** (raíz) o directamente en **`web/`**.
+3. Abre una terminal en **`frontend---sistema-de-apuestas`** (raíz) o directamente en **`web/`**.
 
 ---
 
@@ -135,7 +130,7 @@ cd frontend-programacion-de-software
 Desde la **raíz** del frontend (recomendado):
 
 ```bash
-cd frontend-programacion-de-software
+cd frontend---sistema-de-apuestas
 cd web
 npm install
 ```
@@ -143,7 +138,7 @@ npm install
 O en un solo paso desde la raíz (si tu npm lo permite):
 
 ```bash
-cd frontend-programacion-de-software/web && npm install
+cd frontend---sistema-de-apuestas/web && npm install
 ```
 
 Esto instala Angular, Material, CDK, etc. según **`web/package.json`**.
@@ -162,7 +157,7 @@ Ejemplo desarrollo:
 ```ts
 export const environment = {
   production: false,
-  apiUrl: 'http://127.0.0.1:8000',
+  apiUrl: 'http://0.0.0.0:8000',
 };
 ```
 
@@ -241,11 +236,14 @@ Las rutas cargan componentes con **`loadComponent`** para que cada pantalla sea 
 | `/login` | Login de demostración o alta del primer usuario |
 | `/app` | Layout principal (requiere usuario de auditoría en `localStorage`) |
 | `/app/usuarios` | CRUD usuarios |
-| `/app/categorias` | CRUD categorías |
-| `/app/productos` | CRUD productos |
-| `/app/pedidos` | CRUD pedidos |
-| `/app/detalles-pedido` | CRUD detalles de pedido |
-| `/app/pagos` | CRUD pagos |
+| `/app/billeteras` | CRUD billeteras |
+| `/app/apuestas` | CRUD apuestas |
+| `/app/metodos-pago` | CRUD metodos de pago |
+| `/app/transacciones` | CRUD transacciones |
+| `/app/sorteos` | CRUD sorteos |
+| `/app/bingos` | CRUD bingos |
+| `/app/loterias` | CRUD loterias |
+| `/app/ruletas` | CRUD ruletas |
 | `**` | Cualquier otra ruta → `/login` |
 
 La ruta `/app` está protegida por **`auditUserGuard`**: si no hay UUID de usuario de auditoría guardado, redirige al login.
@@ -283,148 +281,6 @@ Patrón recomendado al **añadir una nueva entidad** del backend:
 
 ---
 
-## Anatomía de un componente Angular (`.ts`, `.html`, `.scss`)
-
-En Angular, un **componente** es la unidad básica de interfaz: junta **lógica** (TypeScript), **vista** (HTML) y **apariencia** (SCSS). En este proyecto los componentes son **standalone** (no dependen de un `NgModule` para declararlos).
-
-| Archivo | Rol |
-|---------|-----|
-| **`.ts`** | Clase decorada con `@Component`: qué plantilla usa, qué estilos, qué módulos de Angular/Material importa, propiedades y métodos que la vista llama. |
-| **`.html`** | Plantilla: HTML + sintaxis de Angular (enlaces, eventos, `@if`, `@for`, componentes Material). |
-| **`.scss`** | Estilos **solo de ese componente** (Angular añade encapsulación para no romper el resto de la app). Opcional si todo el aspecto viene de Material y de `styles.scss`. |
-
-El **selector** del componente (p. ej. `app-usuario-list`) solo se usa si insertas el componente en otro HTML como `<app-usuario-list />`. En este proyecto casi todo se **carga por rutas**, así que el enlace principal es la **ruta** (`loadComponent`), no el selector en un HTML padre.
-
----
-
-## El archivo TypeScript del componente
-
-### Decorador `@Component`
-
-Ejemplo típico (lista):
-
-```ts
-@Component({
-  selector: 'app-usuario-list',
-  imports: [MatTableModule, MatButtonModule, /* ... */],
-  templateUrl: './usuario-list.html',
-  styleUrl: './usuario-list.scss',
-})
-export class UsuarioListComponent { /* ... */ }
-```
-
-- **`selector`**: nombre del tag HTML si lo usaras manualmente.
-- **`imports`**: en componentes **standalone**, aquí van **todos** los módulos de Angular Material y de `@angular/common`/`@angular/forms` que uses en el **HTML** (`MatTableModule`, `MatIconModule`, `RouterLink`, etc.). Si falta uno, el build falla o la plantilla no reconoce la directiva.
-- **`templateUrl` / `styleUrl`**: rutas al `.html` y `.scss` del mismo directorio.
-- **`template` / `styles`**: alternativa: HTML y CSS **inline** en el `.ts` (no usado aquí para mantener archivos separados).
-
-### Clase: propiedades y métodos
-
-- **Datos para la vista**: `readonly displayedColumns`, `dataSource`, `loading` — la plantilla los enlaza con `{{ }}` o `[property]`.
-- **Inyección**: `inject(MatDialog)`, `inject(UsuarioService)` — acceso a servicios sin constructor largo.
-- **Ciclo de vida**: `ngOnInit`, `ngAfterViewInit` (por ejemplo para enlazar el `MatPaginator` a `MatTableDataSource`).
-- **Diálogos**: `this.dialog.open(UsuarioDialogComponent, { data: { mode: 'edit', row } })` — el segundo argumento pasa datos al `.ts` del diálogo vía `MAT_DIALOG_DATA`.
-
----
-
-## La plantilla HTML
-
-### Enlaces (bindings)
-
-| Sintaxis | Significado |
-|----------|-------------|
-| `{{ expresión }}` | Muestra el valor en el DOM (texto). |
-| `[prop]="valor"` | **Property binding**: pasa el valor de TypeScript a una propiedad del elemento o del componente hijo (ej. `[dataSource]="dataSource"`). |
-| `(evento)="handler($event)"` | **Event binding**: llama un método cuando ocurre el evento (click, `selectionChange`, etc.). |
-| `[class.xxx]="condición"` | Añade o quita la clase CSS según un booleano. |
-
-### Control de flujo (Angular 17+)
-
-En las plantillas de este proyecto se usa la **nueva sintaxis**:
-
-- **`@if (condición) { ... } @else { ... }`**: mostrar u ocultar bloques (spinner vs tabla).
-- **`@for (item of lista(); track item.id) { ... }`**: bucles (equivalente moderno a `*ngFor`).
-
-### Directivas Material en HTML
-
-Los componentes Material son **etiquetas personalizadas** con prefijo `mat-`:
-
-- **Contenedor**: `mat-table`, `mat-toolbar`, `mat-sidenav`, `mat-dialog-content`…
-- **Directivas**: `mat-header-cell`, `mat-cell`, `mat-list-item`, `mat-form-field`…
-
-Cada uno exige que su **módulo** correspondiente esté en el array **`imports`** del `.ts` del componente (por ejemplo `MatTableModule` para `mat-table`). La documentación oficial lista qué módulo importar: [Angular Material](https://material.angular.dev/).
-
-### Formularios
-
-- **Reactivos** (`ReactiveFormsModule`): `formControlName`, `[formGroup]` — usados en login y en muchos diálogos.
-- Los campos suelen ir dentro de **`mat-form-field`** con `mat-label`, `matInput`, `mat-select`, etc.
-
-### `index.html` y `app.html`
-
-- **`src/index.html`**: única página HTML que carga el bundle de Angular. Incluye `<app-root></app-root>` (selector del componente raíz), `<base href="/">` y enlaces a fuentes (Roboto, Material Icons).
-- **`app/app.html`**: plantilla mínima con **`<router-outlet />`**. Angular inserta aquí el componente de la ruta activa (login, o el layout `main-layout` con sus hijos). No hay menú ni cabecera en este archivo: todo eso está en **`features/shell/main-layout.html`**.
-
-### `main-layout.html` (cáscara de la aplicación autenticada)
-
-Estructura típica:
-
-- **`mat-sidenav-container`** con `#sidenavShell` y **`autosize`**: contenedor oficial de Material para drawer + contenido; `autosize` ayuda a recalcular el margen del contenido cuando cambia el ancho del menú.
-- **`mat-sidenav`**: menú lateral; clases como **`collapsed`** (vinculadas a un `signal` en el `.ts`) cambian el ancho; enlaces con **`routerLink`** y **`routerLinkActive`** para marcar la ruta activa.
-- **`mat-sidenav-content`**: zona derecha con **`mat-toolbar`** (barra superior) y un **`<main>`** con otro **`<router-outlet />`** donde se cargan las listas (`usuarios`, `productos`, etc.).
-
----
-
-## Estilos: global vs por componente (SCSS)
-
-### Encapsulación
-
-Por defecto, Angular **añade atributos únicos** a los elementos del componente (p. ej. `_nghost_xxx`) y reescribe los selectores del `.scss` para que **solo afecten a esa plantilla**. Así evitas que `.title` de un listado rompa otro `.title` en otra pantalla.
-
-- Si necesitas un estilo que **sí** penetre en hijos profundos (p. ej. dentro de un componente Material), a veces se usa **`::ng-deep`** (en desuso a largo plazo pero aún presente en `main-layout.scss` para afinar el toolbar). En proyectos nuevos se prefieren variables CSS de Material o `host-context`.
-
-### Dónde poner cada cosa
-
-| Ubicación | Uso recomendado |
-|-----------|-----------------|
-| **`src/styles.scss`** | Tema Material (`mat.theme`), fondo del `body`, utilidades compartidas (`.dialog-body`, `.grid` para formularios de diálogo), animaciones de **View Transitions** (`::view-transition-old`, etc.). |
-| **`app/app.scss`** | Casi vacío: solo lo que afecta al host `<app-root>`. |
-| **`features/*/nombre.scss`** | Layout del listado, espaciado de la página, sombras de la tabla, **sin** repetir todo el tema. |
-| **Sin archivo `.scss` en diálogos** | Muchos diálogos confían en Material + clases globales `.dialog-body` definidas en `styles.scss`. |
-
-### Variables CSS de Material 3
-
-Tras `@include mat.theme(...)` en `styles.scss`, el navegador expone variables como:
-
-- `var(--mat-sys-primary)`
-- `var(--mat-sys-surface)`
-- `var(--mat-sys-on-surface)`
-
-En **`main-layout.scss`** se usan con `color-mix()` para fondos degradados y bordes coherentes con el tema sin hardcodear hex a mano en cada pantalla.
-
-### Ejemplos de archivos `.scss` en el proyecto
-
-| Archivo | Contenido típico |
-|---------|-------------------|
-| **`features/shell/main-layout.scss`** | Ancho del sidenav (expandido/colapsado), transiciones, estilos del **toolbar** con gradiente, lista de navegación (`.nav-item`, `.active-link`), ajustes con `::ng-deep` hacia internals de Material en la barra superior. |
-| **`features/login/login.scss`** | Centrado de la tarjeta, animación de fondo, rejilla del formulario “primer usuario”, botón de envío. |
-| **`features/*/*-list.scss`** | Cabecera de página (`.page-head`), contenedor de tabla (`.table-wrap`, sombra), celda de acciones; **no** redefine colores primarios (vienen del tema). |
-
----
-
-## Tema Material y `styles.scss`
-
-Flujo resumido del archivo global:
-
-1. **`@use '@angular/material' as mat;`** — carga el sistema de temas Sass de Material.
-2. **`@include mat.theme(( color: (...), typography: Roboto, density: 0 ));`** en el selector **`html`**: define paletas **primary** y **tertiary** (en este proyecto violeta y cyan) y genera variables CSS para toda la app.
-3. **`body`**: `color-scheme`, fondo con gradientes suaves, tipografía por defecto.
-4. **Bloque `@supports (view-transition-name: ...)`**: animaciones opcionales cuando el navegador soporta transiciones entre vistas del router.
-5. **Clases `.dialog-body`**: rejilla para formularios dentro de `MatDialog` (evita duplicar el mismo grid en cada `*-dialog.html`).
-
-El **`index.html`** carga **Roboto** y la fuente de **Material Icons** por CDN; el `<base href="/">` es necesario para que el router y los assets resuelvan bien en producción.
-
----
-
 ## Ejemplo de flujo: lista CRUD
 
 1. El usuario navega a **`/app/usuarios`** → el router carga **`usuario-list`** (lazy).
@@ -455,41 +311,3 @@ No hay JWT en esta versión: el “login” solo asocia un **usuario existente**
 Ese UUID se usa en los cuerpos que el backend exige para **trazabilidad** (`id_usuario_creacion`, `id_usuario_edita`, etc.).
 
 ---
-
-## Integración con el backend (CORS)
-
-El backend debe permitir el origen del frontend (por ejemplo `http://localhost:4200`). En el proyecto de ejemplo, CORS está configurado en **`src/api/app.py`** del repositorio FastAPI.
-
-Si cambias el puerto del `ng serve`, añade ese origen en CORS del backend.
-
----
-
-## Problemas frecuentes
-
-| Síntoma | Qué revisar |
-|---------|-------------|
-| **404** en `/usuarios` o similares | Que el backend use rutas de colección con **`/`** final (`GET /usuarios/`) y que el front llame a la misma convención. |
-| **CORS error** en consola | Origen del front permitido en FastAPI; backend en marcha. |
-| **`npm start` no existe** en la raíz | Ejecuta desde **`web/`** o usa el `package.json` de la raíz que delega a `web`. |
-| **Hueco en blanco** al colapsar el menú | Debe estar **`autosize`** en `mat-sidenav-container` y `updateContentMargins()` tras colapsar (ya integrado en `main-layout`). |
-| **No carga datos** | `environment.apiUrl` correcto; API levantada en ese host/puerto. |
-
----
-
-## Comandos útiles (referencia rápida)
-
-| Acción | Comando (desde `web/`) |
-|--------|-------------------------|
-| Instalar dependencias | `npm install` |
-| Servidor desarrollo | `npm start` |
-| Compilar producción | `npm run build` |
-| Tests unitarios | `npm test` |
-| CLI Angular | `npx ng generate component ...` |
-
----
-
-## Licencia y uso docente
-
-Este proyecto está pensado para **docencia**: los alumnos pueden clonarlo, instalar dependencias, conectar su propio backend y extender entidades siguiendo la misma estructura de **servicio + lista + diálogo + rutas**.
-
-Si publicas mejoras (temas, pruebas e2e, login real con JWT), documenta los cambios en este README o en un `CHANGELOG.md` aparte.
