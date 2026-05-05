@@ -62,7 +62,7 @@ export class TransaccionListComponent implements AfterViewInit {
     this.service.list().subscribe({
       next: (rows) => {
         this.dataSource.data = rows;
-        this.paginator.firstPage();
+        this.paginator?.firstPage();
         this.loading = false;
       },
       error: (err: HttpErrorResponse) => {

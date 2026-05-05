@@ -150,7 +150,7 @@ export interface RuletaUpdate {
 
 export interface RuletaRead {
     id_ruleta: UUID;
-    eleccion_usuario: Record<string, any>;
+    eleccion_usuario: EleccionRuleta;
     costo_entrada: number;
     recompensa: number;
 }
