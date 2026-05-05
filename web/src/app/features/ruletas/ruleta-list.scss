@@ -1,18 +1,236 @@
-.page-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
+// ── Fuentes ──────────────────────────────────────────────
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap');
 
-  h1 {
-    margin: 0;
-    font: var(--mat-sys-title-large);
-    font-weight: 700;
-    letter-spacing: -0.01em;
+// ── Tokens ───────────────────────────────────────────────
+:host {
+  --gold:        #d4a843;
+  --gold-light:  #f0cb6e;
+  --gold-dim:    #8a6d24;
+  --felt:        #0d3b27;
+  --felt-mid:    #1a5238;
+  --felt-light:  #246040;
+  --surface:     #111a14;
+  --surface-2:   #192218;
+  --red:         #c0392b;
+  --red-light:   #e74c3c;
+  --text-main:   #f5ead8;
+  --text-muted:  #8b9e8e;
+  --radius:      12px;
+}
+
+// ── Layout principal ─────────────────────────────────────
+.ruleta-page {
+  display: grid;
+  grid-template-columns: 460px 1fr;
+  gap: 32px;
+  min-height: 100vh;
+  background: var(--surface);
+  padding: 32px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-main);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
   }
 }
 
+// ── Panel rueda ──────────────────────────────────────────
+.wheel-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  position: sticky;
+  top: 32px;
+  height: fit-content;
+}
+
+.wheel-title {
+  text-align: center;
+
+  .wheel-title-main {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(212, 168, 67, 0.4);
+  }
+
+  .wheel-title-sub {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+}
+
+.wheel-outer {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  flex-shrink: 0;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  color: var(--gold);
+  z-index: 10;
+  filter: drop-shadow(0 2px 8px rgba(212, 168, 67, 0.6));
+  line-height: 1;
+}
+
+.wheel-canvas {
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  display: block;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 4px var(--gold-dim),
+    0 0 0 8px rgba(212, 168, 67, 0.15),
+    0 20px 60px rgba(0, 0, 0, 0.7);
+  transition: transform 0.1s;
+
+  &:hover {
+    transform: scale(1.01);
+  }
+}
+
+.wheel-center-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 4px var(--surface),
+    0 0 0 6px var(--gold-dim),
+    0 8px 24px rgba(0, 0, 0, 0.5);
+  transition: background 0.2s, transform 0.2s;
+  user-select: none;
+
+  &:hover {
+    background: var(--gold-light);
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+
+  &.spinning {
+    animation: pulse 0.6s ease-in-out infinite alternate;
+    cursor: not-allowed;
+  }
+}
+
+@keyframes pulse {
+  from { box-shadow: 0 0 0 4px var(--surface), 0 0 0 6px var(--gold-dim), 0 8px 24px rgba(0,0,0,0.5); }
+  to   { box-shadow: 0 0 0 4px var(--surface), 0 0 0 10px var(--gold), 0 8px 40px rgba(212,168,67,0.4); }
+}
+
+// ── Badge resultado ───────────────────────────────────────
+.result-badge {
+  background: var(--surface-2);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius);
+  padding: 14px 28px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s, transform 0.4s;
+  min-width: 200px;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &[data-color='rojo'] .result-num { color: var(--red-light); }
+  &[data-color='negro'] .result-num { color: #ccc; }
+  &[data-color='verde'] .result-num { color: #2ecc71; }
+
+  .result-num {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--gold);
+  }
+
+  .result-info {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+}
+
+// ── Panel gestión ─────────────────────────────────────────
+.manage-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.manage-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.2);
+
+  .manage-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0 0 2px;
+  }
+
+  .manage-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+  }
+}
+
+.btn-nuevo {
+  background: var(--gold) !important;
+  color: var(--surface) !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  gap: 4px;
+  letter-spacing: 0.02em;
+
+  mat-icon { font-size: 18px; height: 18px; width: 18px; }
+
+  &:hover {
+    background: var(--gold-light) !important;
+  }
+}
+
+// ── Loading ───────────────────────────────────────────────
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -20,79 +238,182 @@
   justify-content: center;
   padding: 64px 24px;
   gap: 16px;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-muted);
 
-  span {
-    font: var(--mat-sys-body-medium);
+  span { font-size: 14px; }
+
+  ::ng-deep .mat-mdc-progress-spinner circle {
+    stroke: var(--gold) !important;
   }
 }
 
-.table-wrap {
-  overflow: auto;
-  border-radius: 12px;
-  background-color: var(--mat-sys-surface);
-
-  table {
-    width: 100%;
-    border-collapse: separate;
-  }
+// ── Cards list ────────────────────────────────────────────
+.cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-th.mat-header-cell {
-  background: color-mix(
-    in srgb,
-    var(--mat-sys-surface-container-high) 60%,
-    var(--mat-sys-surface)
-  );
-
-  font: var(--mat-sys-label-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--mat-sys-on-surface);
-}
-
-tr.mat-row {
-  height: 56px;
+.ruleta-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface-2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  transition: border-color 0.2s, background 0.2s;
 
   &:hover {
-    background-color: color-mix(
-      in srgb,
-      var(--mat-sys-primary) 5%,
-      transparent
-    ) !important;
+    border-color: rgba(212, 168, 67, 0.3);
+    background: rgba(26, 82, 56, 0.2);
   }
 }
 
-.actions-cell {
-  white-space: nowrap;
-  text-align: right;
-  padding-right: 16px !important;
+.card-left {
+  flex-shrink: 0;
 }
 
-.mat-column-numero,
-.mat-column-color,
-.mat-column-paridad,
-.mat-column-rango {
-  font-weight: 600;
-}
-
-.mat-column-costo_entrada {
-  color: #1565c0;
-  font-weight: 600;
-}
-
-.mat-column-recompensa {
-  color: #2e7d32;
+.card-num {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
   font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
-.mat-paginator {
-  background-color: transparent !important;
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-  border-top: 1px solid
-    color-mix(
-      in srgb,
-      var(--mat-sys-outline-variant) 45%,
-      transparent
-    );
+.card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+  text-transform: capitalize;
+
+  &[data-color='rojo'] {
+    background: rgba(192, 57, 43, 0.25);
+    color: #e74c3c;
+    border: 1px solid rgba(192, 57, 43, 0.4);
+  }
+
+  &[data-color='negro'] {
+    background: rgba(255, 255, 255, 0.08);
+    color: #bbb;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  &[data-color='verde'] {
+    background: rgba(46, 204, 113, 0.15);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+  }
+
+  &.badge-neutral {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+.card-amounts {
+  display: flex;
+  gap: 20px;
+}
+
+.amount-cost,
+.amount-reward {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+
+  .amt-icon {
+    font-size: 15px;
+    height: 15px;
+    width: 15px;
+  }
+}
+
+.amount-cost {
+  color: #5dade2;
+  .amt-icon { color: #5dade2; }
+}
+
+.amount-reward {
+  color: var(--gold);
+  .amt-icon { color: var(--gold); }
+}
+
+.card-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.btn-edit {
+  color: var(--text-muted) !important;
+  &:hover { color: var(--gold) !important; }
+}
+
+.btn-delete {
+  color: var(--text-muted) !important;
+  &:hover { color: var(--red-light) !important; }
+}
+
+// ── Empty state ───────────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  gap: 12px;
+  color: var(--text-muted);
+  text-align: center;
+
+  mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    opacity: 0.3;
+  }
+
+  p { margin: 0; font-size: 15px; }
+
+  button {
+    margin-top: 8px;
+    border-color: var(--gold-dim) !important;
+    color: var(--gold) !important;
+  }
+}
+
+// ── Paginator ─────────────────────────────────────────────
+::ng-deep .mat-mdc-paginator {
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+  .mat-mdc-icon-button { color: var(--text-muted) !important; }
+  .mat-mdc-select-value { color: var(--text-muted) !important; }
 }
