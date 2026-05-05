@@ -15,6 +15,26 @@
         }
       </mat-select>
     </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>Bingo (opcional)</mat-label>
+      <mat-select formControlName="id_bingo">
+        <mat-option [value]="null">— Ninguno —</mat-option>
+        @for (b of bingos(); track b.id_bingo) {
+          <mat-option [value]="b.id_bingo">Bingo — {{ b.aciertos }} aciertos</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>Ruleta (opcional)</mat-label>
+      <mat-select formControlName="id_ruleta">
+        <mat-option [value]="null">— Ninguna —</mat-option>
+        @for (r of ruletas(); track r.id_ruleta) {
+          <mat-option [value]="r.id_ruleta">Ruleta — ${{ r.costo_entrada }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
