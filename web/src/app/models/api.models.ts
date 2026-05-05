@@ -86,6 +86,7 @@ export interface BingoRead {
     aciertos: number;
     costo_entrada: number;
     recompensa: number;
+    carton_json: number[][];
 }
 
 export interface LoteriaCreate {
