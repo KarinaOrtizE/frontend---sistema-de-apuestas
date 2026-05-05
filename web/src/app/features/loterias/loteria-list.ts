@@ -38,7 +38,7 @@ interface GameResult {
     MatSnackBarModule,
   ],
   templateUrl: './loteria-list.html',
-  styleUrl: './loteria-list.scss',
+  styleUrls: ['./loteria-list.scss'],
 })
 export class LoteriaListComponent implements AfterViewInit {
   private readonly svc = inject(LoteriaService);
