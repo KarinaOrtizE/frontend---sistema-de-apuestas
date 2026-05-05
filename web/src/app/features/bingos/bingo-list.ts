@@ -8,6 +8,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { filter } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
+
 
 import { BingoService } from '../../core/services/bingo.service';
 import { BingoRead } from '../../models/api.models';
@@ -24,6 +26,7 @@ import { BingoDialogComponent, BingoDialogData } from './bingo-dialog';
     MatDialogModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    CommonModule,
   ],
   templateUrl: './bingo-list.html',
   styleUrl: './bingo-list.scss',

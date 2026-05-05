@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { filter } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 
 import { TransaccionService } from '../../core/services/transaccion.service';
 import { TransaccionRead } from '../../models/api.models';
@@ -24,6 +25,7 @@ import { TransaccionDialogComponent, TransaccionDialogData } from './transaccion
     MatDialogModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    CommonModule,
   ],
   templateUrl: './transaccion-list.html',
   styleUrl: './transaccion-list.scss',

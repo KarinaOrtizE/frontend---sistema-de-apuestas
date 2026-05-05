@@ -202,12 +202,14 @@ export interface TransaccionRead {
 }
 
 export interface UsuarioCreate {
-    nombre: string;
-    username: string;
+    nombre_completo: string
     email: string;
-    password: string;
     rol: string;
     fecha_nac?: Date | null;
+    nombre_usuario: string;
+    clave: string;
+    telefono?: string;
+    activo?: boolean | null;
 }
 
 export interface UsuarioUpdate {
@@ -216,6 +218,11 @@ export interface UsuarioUpdate {
     password?: string | null;
     rol?: string | null;
     activo?: boolean | null;
+    nombre_completo?: string;
+    clave?: string;
+    nombre_usuario: string;
+    email?: string;
+    telefono?: string;
 }
 
 export interface UsuarioRead {
@@ -225,4 +232,7 @@ export interface UsuarioRead {
     email: string;
     rol: string;
     activo: boolean;
+    nombre_usuario: string;
+    nombre_completo?: string;
+    telefono?: string;
 }

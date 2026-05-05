@@ -7,6 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 import { TransaccionService } from '../../core/services/transaccion.service';
 import { TransaccionRead, TransaccionUpdate } from '../../models/api.models';
@@ -27,6 +29,8 @@ export interface TransaccionDialogData {
     MatInputModule,
     MatSnackBarModule,
     MatSelectModule,
+    CommonModule,
+    MatIconModule,
   ],
   templateUrl: './transaccion-dialog.html',
 })

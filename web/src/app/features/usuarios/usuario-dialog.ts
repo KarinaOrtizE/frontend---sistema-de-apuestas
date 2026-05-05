@@ -7,6 +7,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 import { UsuarioService } from '../../core/services/usuario.service';
 import { UsuarioRead, UsuarioUpdate } from '../../models/api.models';
@@ -27,6 +29,8 @@ export interface UsuarioDialogData {
     MatInputModule,
     MatCheckboxModule,
     MatSnackBarModule,
+    CommonModule,
+    MatIconModule,
   ],
   templateUrl: './usuario-dialog.html',
 })
@@ -85,7 +89,7 @@ export class UsuarioDialogComponent {
         email: v.email,
         clave: v.clave,
         rol: v.rol,
-        telefono: v.telefono || null,
+        telefono: v.telefono || undefined,
         activo: v.activo,
       }).subscribe({
         next: () => this.dialogRef.close(true),
@@ -98,7 +102,7 @@ export class UsuarioDialogComponent {
         nombre_usuario: v.nombre_usuario,
         email: v.email,
         rol: v.rol,
-        telefono: v.telefono || null,
+        telefono: v.telefono || undefined,
         activo: v.activo,
       };
       if (v.clave?.trim()) body.clave = v.clave;
