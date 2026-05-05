@@ -29,7 +29,7 @@
           <mat-label>Actuar como...</mat-label>
           <mat-select [value]="audit.usuarioId()" (selectionChange)="onUsuarioAudit($event.value)">
             @for (u of usuarios(); track u.id_usuario) {
-              <mat-option [value]="u.id_usuario">{{ u.nombre }} ({{ u.rol }})</mat-option>
+             <mat-option [value]="u.id_usuario">{{ u.nombre_completo }} ({{ u.rol }})</mat-option>
             }
           </mat-select>
         </mat-form-field>
