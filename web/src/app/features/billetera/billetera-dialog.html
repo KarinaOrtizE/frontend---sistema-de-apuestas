@@ -6,7 +6,7 @@
         <mat-label>Usuario</mat-label>
         <mat-select formControlName="id_usuario">
           @for (u of usuarios(); track u.id_usuario) {
-            <mat-option [value]="u.id_usuario">{{ u.nombre }} ({{ u.username }})</mat-option>
+            <mat-option [value]="u.id_usuario">{{ u.nombre_completo }} ({{ u.nombre_usuario }})</mat-option>
           }
         </mat-select>
       </mat-form-field>
