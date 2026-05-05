@@ -1,100 +1,143 @@
-<h2 mat-dialog-title>
-  {{ data.mode === 'create' ? 'Nueva Ruleta' : 'Editar Ruleta' }}
-</h2>
+<div class="dialog-wrapper">
 
-<mat-dialog-content class="dialog-body">
-  <form [formGroup]="form" class="grid-form">
+  <div class="dialog-header">
+    <div class="dialog-icon">
+      <mat-icon>casino</mat-icon>
+    </div>
+    <div>
+      <h2 class="dialog-title">
+        {{ data.mode === 'create' ? 'Nueva Ruleta' : 'Editar Ruleta' }}
+      </h2>
+      <p class="dialog-sub">
+        {{ data.mode === 'create' ? 'Configura los parámetros del juego' : 'Modifica la configuración existente' }}
+      </p>
+    </div>
+  </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Número</mat-label>
-      <input
-        matInput
-        type="number"
-        formControlName="numero"
-      />
-    </mat-form-field>
+  <mat-dialog-content class="dialog-body">
+    <form [formGroup]="form" class="grid-form">
 
-    <mat-form-field appearance="outline">
-      <mat-label>Color</mat-label>
-      <mat-select formControlName="color">
-        @for (c of colores(); track c) {
-          <mat-option [value]="c">
-            {{ c }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+      <div class="form-section-label">Apuesta del jugador</div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Paridad</mat-label>
-      <mat-select formControlName="paridad">
-        @for (p of paridades(); track p) {
-          <mat-option [value]="p">
-            {{ p }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="field-number">
+          <mat-label>Número (0–36)</mat-label>
+          <input
+            matInput
+            type="number"
+            min="0"
+            max="36"
+            formControlName="numero"
+            placeholder="—"
+          />
+          <mat-hint>Opcional</mat-hint>
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Rango</mat-label>
-      <mat-select formControlName="rango">
-        @for (r of rangos(); track r) {
-          <mat-option [value]="r">
-            {{ r }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+        <mat-form-field appearance="outline" class="field-select">
+          <mat-label>Color</mat-label>
+          <mat-select formControlName="color">
+            <mat-option value="">— Ninguno —</mat-option>
+            @for (c of colores(); track c) {
+              <mat-option [value]="c">
+                <span class="option-color" [attr.data-col]="c"></span>
+                {{ c | titlecase }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Costo Entrada</mat-label>
-      <input
-        matInput
-        type="number"
-        formControlName="costo_entrada"
-      />
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Paridad</mat-label>
+          <mat-select formControlName="paridad">
+            <mat-option value="">— Ninguno —</mat-option>
+            @for (p of paridades(); track p) {
+              <mat-option [value]="p">{{ p | titlecase }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
-      @if (form.controls.costo_entrada.hasError('required')) {
-        <mat-error>
-          El costo es obligatorio
-        </mat-error>
+        <mat-form-field appearance="outline">
+          <mat-label>Rango</mat-label>
+          <mat-select formControlName="rango">
+            <mat-option value="">— Ninguno —</mat-option>
+            @for (r of rangos(); track r) {
+              <mat-option [value]="r">{{ r }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-section-label">Economía del juego</div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Costo de entrada</mat-label>
+          <span matTextPrefix class="prefix-icon">$&nbsp;</span>
+          <input
+            matInput
+            type="number"
+            min="0"
+            formControlName="costo_entrada"
+          />
+          @if (form.controls.costo_entrada.hasError('required')) {
+            <mat-error>El costo es obligatorio</mat-error>
+          }
+          @if (form.controls.costo_entrada.hasError('min')) {
+            <mat-error>Debe ser ≥ 0</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-reward">
+          <mat-label>Recompensa</mat-label>
+          <span matTextPrefix class="prefix-icon">$&nbsp;</span>
+          <input
+            matInput
+            type="number"
+            min="0"
+            formControlName="recompensa"
+          />
+          @if (form.controls.recompensa.hasError('required')) {
+            <mat-error>La recompensa es obligatoria</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      @if (form.value.costo_entrada && form.value.recompensa) {
+        <div class="multiplier-badge">
+          <mat-icon>trending_up</mat-icon>
+          Multiplicador: <strong>×{{ (form.value.recompensa / form.value.costo_entrada) | number:'1.1-2' }}</strong>
+        </div>
       }
-    </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Recompensa</mat-label>
-      <input
-        matInput
-        type="number"
-        formControlName="recompensa"
-      />
+    </form>
+  </mat-dialog-content>
 
-      @if (form.controls.recompensa.hasError('required')) {
-        <mat-error>
-          La recompensa es obligatoria
-        </mat-error>
+  <mat-dialog-actions class="dialog-footer" align="end">
+    <button
+      mat-stroked-button
+      type="button"
+      class="btn-cancel"
+      (click)="cancel()"
+    >
+      Cancelar
+    </button>
+
+    <button
+      mat-flat-button
+      type="button"
+      class="btn-save"
+      (click)="save()"
+      [disabled]="saving"
+    >
+      @if (saving) {
+        <mat-spinner diameter="18"></mat-spinner>
+      } @else {
+        <mat-icon>{{ data.mode === 'create' ? 'add_circle' : 'save' }}</mat-icon>
+        {{ data.mode === 'create' ? 'Crear Ruleta' : 'Guardar Cambios' }}
       }
-    </mat-form-field>
+    </button>
+  </mat-dialog-actions>
 
-  </form>
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
-  <button
-    mat-stroked-button
-    type="button"
-    (click)="cancel()"
-  >
-    Cancelar
-  </button>
-
-  <button
-    mat-flat-button
-    color="primary"
-    type="button"
-    (click)="save()"
-  >
-    {{ data.mode === 'create' ? 'Crear' : 'Guardar' }}
-  </button>
-</mat-dialog-actions>
+</div>
