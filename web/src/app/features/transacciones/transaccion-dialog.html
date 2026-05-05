@@ -1,0 +1,75 @@
+<h2 mat-dialog-title>
+  <mat-icon color="primary">
+    {{ data.mode === 'create' ? 'payments' : 'edit_note' }}
+  </mat-icon>
+  {{ data.mode === 'create' ? 'Nueva Transacción' : 'Editar Transacción' }}
+</h2>
+
+<mat-dialog-content class="dialog-body">
+  <form [formGroup]="form" class="grid-form">
+
+    <!-- TIPO -->
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo</mat-label>
+      <mat-icon matPrefix>category</mat-icon>
+      <mat-select formControlName="tipo" required>
+        @for (t of tipos; track t) {
+          <mat-option [value]="t">{{ t }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.tipo.invalid && form.controls.tipo.touched) {
+        <mat-error>El tipo es obligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- MONTO -->
+    <mat-form-field appearance="outline">
+      <mat-label>Monto</mat-label>
+      <mat-icon matPrefix>attach_money</mat-icon>
+      <input matInput type="number" formControlName="monto" required />
+      @if (form.controls.monto.errors?.['required'] && form.controls.monto.touched) {
+        <mat-error>El monto es obligatorio</mat-error>
+      }
+      @if (form.controls.monto.errors?.['min'] && form.controls.monto.touched) {
+        <mat-error>El monto debe ser mayor a 0</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- ID BILLETERA -->
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>ID Billetera</mat-label>
+      <mat-icon matPrefix>account_balance_wallet</mat-icon>
+      <input matInput formControlName="id_billetera" required />
+      @if (form.controls.id_billetera.invalid && form.controls.id_billetera.touched) {
+        <mat-error>La billetera es obligatoria</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- ID MÉTODO PAGO -->
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>ID Método de Pago</mat-label>
+      <mat-icon matPrefix>credit_card</mat-icon>
+      <input matInput formControlName="id_metodo_pago" required />
+      @if (form.controls.id_metodo_pago.invalid && form.controls.id_metodo_pago.touched) {
+        <mat-error>El método de pago es obligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- INFO SOLO EN EDIT -->
+    <div class="span-2 activo-row">
+      @if (data.mode === 'edit') {
+        <span class="id-hint">
+          ID: {{ data.row?.id_transaccion | slice:0:8 }}...
+        </span>
+      }
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancelar</button>
+  <button mat-flat-button color="primary" type="button" (click)="save()">
+    {{ data.mode === 'create' ? 'Crear' : 'Guardar Cambios' }}
+  </button>
+</mat-dialog-actions>
