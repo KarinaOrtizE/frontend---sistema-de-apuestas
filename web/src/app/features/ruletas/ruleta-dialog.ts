@@ -57,10 +57,14 @@ export class RuletaDialogComponent implements OnInit {
       const r = this.data.row;
 
       this.form.patchValue({
-        numero: r.eleccion_usuario?.numero ?? null,
-        color: r.eleccion_usuario?.color ?? '',
-        paridad: r.eleccion_usuario?.paridad ?? '',
-        rango: r.eleccion_usuario?.rango ?? '',
+        //numero: r.eleccion_usuario?.numero ?? null,
+        numero: r.eleccion_usuario ? r.eleccion_usuario['numero'] : null,
+        //color: r.eleccion_usuario?.color ?? '',
+        color: r.eleccion_usuario ? r.eleccion_usuario['color'] : '',
+        //paridad: r.eleccion_usuario?.paridad ?? '',
+        paridad: r.eleccion_usuario ? r.eleccion_usuario['paridad'] : '',
+        //rango: r.eleccion_usuario?.rango ?? '',
+        rango: r.eleccion_usuario ? r.eleccion_usuario['rango'] : '',
         costo_entrada: r.costo_entrada,
         recompensa: r.recompensa,
       });
