@@ -23,6 +23,19 @@
       }
     </mat-nav-list>
 
+    @if (!sidebarCollapsed()) {
+      <div class="audit-sidebar">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="audit-field-sidebar">
+          <mat-label>Actuar como...</mat-label>
+          <mat-select [value]="audit.usuarioId()" (selectionChange)="onUsuarioAudit($event.value)">
+            @for (u of usuarios(); track u.id_usuario) {
+              <mat-option [value]="u.id_usuario">{{ u.nombre }} ({{ u.rol }})</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    }
+
     <div class="nav-footer">
       <button mat-stroked-button type="button" class="collapse-btn" (click)="toggleSidebar()">
         <mat-icon>{{ sidebarCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
@@ -38,17 +51,6 @@
       </button>
       <span class="title">Dashboard</span>
       <span class="spacer"></span>
-
-      <mat-form-field appearance="outline" class="audit-field" subscriptSizing="dynamic">
-        <mat-label>Actuar como...</mat-label>
-        <mat-select [value]="audit.usuarioId()" (selectionChange)="onUsuarioAudit($event.value)">
-         @for (u of usuarios(); track u.id_usuario) {
-        <mat-option [value]="u.id_usuario">
-            {{ u.nombre }} ({{ u.rol }})
-        </mat-option>
-         }
-        </mat-select>
-      </mat-form-field>
 
       <button mat-icon-button (click)="logout()" aria-label="Salir">
         <mat-icon>logout</mat-icon>

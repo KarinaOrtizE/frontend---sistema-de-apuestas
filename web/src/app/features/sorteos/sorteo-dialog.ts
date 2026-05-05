@@ -8,9 +8,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { BingoService } from '../../core/services/bingo.service';
 import { LoteriaService } from '../../core/services/loteria.service';
+import { RuletaService } from '../../core/services/ruleta.service';
 import { SorteoService } from '../../core/services/sorteos.service';
-import { LoteriaRead, SorteoRead } from '../../models/api.models';
+import { BingoRead, LoteriaRead, RuletaRead, SorteoRead } from '../../models/api.models';
 
 export interface SorteoDialogData {
   mode: 'create' | 'edit';
@@ -38,17 +40,32 @@ export class SorteoDialogComponent implements OnInit {
   private readonly dialogRef = inject(MatDialogRef<SorteoDialogComponent, boolean>);
   private readonly snack = inject(MatSnackBar);
 
+  private readonly bingoSvc = inject(BingoService);
+  private readonly ruletaSvc = inject(RuletaService);
+
   readonly data = inject<SorteoDialogData>(MAT_DIALOG_DATA);
   readonly loterias = signal<LoteriaRead[]>([]);
+  readonly bingos   = signal<BingoRead[]>([]);
+  readonly ruletas  = signal<RuletaRead[]>([]);
 
   readonly form = this.fb.nonNullable.group({
     fecha_sorteo: ['', Validators.required],
     id_loteria:   ['' as string | null],
+    id_bingo:     ['' as string | null],
+    id_ruleta:    ['' as string | null],
   });
 
   ngOnInit(): void {
     this.loteriaSvc.list().subscribe({
       next: (rows) => this.loterias.set(rows),
+      error: (err: HttpErrorResponse) => this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
+    });
+    this.bingoSvc.list().subscribe({
+      next: (rows) => this.bingos.set(rows),
+      error: (err: HttpErrorResponse) => this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
+    });
+    this.ruletaSvc.list().subscribe({
+      next: (rows) => this.ruletas.set(rows),
       error: (err: HttpErrorResponse) => this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
     });
 
@@ -59,6 +76,8 @@ export class SorteoDialogComponent implements OnInit {
           ? new Date(r.fecha_sorteo).toISOString().slice(0, 16)
           : '',
         id_loteria: r.id_loteria ?? null,
+        id_bingo:   r.id_bingo   ?? null,
+        id_ruleta:  r.id_ruleta  ?? null,
       });
     }
   }
@@ -76,6 +95,8 @@ export class SorteoDialogComponent implements OnInit {
     const payload = {
       fecha_sorteo: new Date(v.fecha_sorteo),
       id_loteria:   v.id_loteria || null,
+      id_bingo:     v.id_bingo   || null,
+      id_ruleta:    v.id_ruleta  || null,
     };
 
     if (this.data.mode === 'create') {
