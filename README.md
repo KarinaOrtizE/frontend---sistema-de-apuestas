@@ -17,10 +17,10 @@ Cliente web en **Angular** con **Angular Material** que consume la API REST del 
 9. [Arquitectura de la aplicación Angular](#arquitectura-de-la-aplicación-angular)
 10. [Rutas y navegación](#rutas-y-navegación)
 11. [Componentes y convenciones](#componentes-y-convenciones)
-17. [Ejemplo de flujo: lista CRUD](#ejemplo-de-flujo-lista-crud)
-18. [Servicios HTTP y modelos](#servicios-http-y-modelos)
-19. [Autenticación y usuario de auditoría](#autenticación-y-usuario-de-auditoría)
-20. [Enlace del video demostrativo](#Enlace-del-video-demostrativo)
+12. [Ejemplo de flujo: lista CRUD](#ejemplo-de-flujo-lista-crud)
+13. [Servicios HTTP y modelos](#servicios-http-y-modelos)
+14. [Autenticación y usuario de auditoría](#autenticación-y-usuario-de-auditoría)
+15. [Enlace del video demostrativo](#Enlace-del-video-demostrativo)
 
 ---
 
