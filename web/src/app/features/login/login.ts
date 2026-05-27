@@ -37,6 +37,7 @@ export class LoginComponent implements OnInit {
 
   readonly loading = signal(true);
   readonly usuarios = signal<UsuarioRead[]>([]);
+  readonly mode = signal<'login' | 'register'>('login');
 
   readonly loginForm = this.fb.nonNullable.group({
     nombre_usuario: ['', Validators.required],
@@ -61,6 +62,9 @@ export class LoginComponent implements OnInit {
     this.usuarioService.list().subscribe({
       next: (rows) => {
         this.usuarios.set(rows);
+        if (rows.length === 0) {
+          this.mode.set('register');
+        }
         this.loading.set(false);
       },
       error: (err: HttpErrorResponse) => {
@@ -88,6 +92,14 @@ export class LoginComponent implements OnInit {
     void this.router.navigateByUrl('/app');
   }
 
+  mostrarLogin(): void {
+    this.mode.set('login');
+  }
+
+  mostrarRegistro(): void {
+    this.mode.set('register');
+  }
+
   crearPrimero(): void {
     if (this.firstUserForm.invalid) {
       this.firstUserForm.markAllAsTouched();
@@ -100,7 +112,7 @@ export class LoginComponent implements OnInit {
         nombre_usuario: v.nombre_usuario,
         email: v.email,
         clave: v.clave,
-        rol: v.rol,
+        rol: this.usuarios().length === 0 ? 'admin' : 'usuario',
         telefono: v.telefono || undefined,
         activo: true,
       })

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, effect, inject, ViewChild } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -10,10 +10,11 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { filter } from 'rxjs/operators';
 
+import { AuditContextService } from '../../core/audit-context.service';
 import { BilleteraService } from '../../core/services/billetera.service';
-import { BilleteraRead } from '../../models/api.models';
+import { BilleteraRead, TipoTransaccion } from '../../models/api.models';
 import { shortId } from '../../shared/ids';
-import { BilleteraDialogComponent, BilleteraDialogData } from './billetera-dialog';
+import { TransaccionDialogComponent } from '../transacciones/transaccion-dialog';
 
 @Component({
   selector: 'app-billetera-list',
@@ -34,6 +35,7 @@ import { BilleteraDialogComponent, BilleteraDialogData } from './billetera-dialo
 })
 export class BilleteraListComponent implements AfterViewInit {
   private readonly svc = inject(BilleteraService);
+  private readonly audit = inject(AuditContextService);
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
 
@@ -48,14 +50,16 @@ export class BilleteraListComponent implements AfterViewInit {
   }
 
   constructor() {
-    this.reload();
+    effect(() => {
+      this.reload(this.audit.usuarioId() ?? undefined);
+    });
   }
 
   shortId = shortId;
 
-  reload(): void {
+  reload(usuarioId?: string): void {
     this.loading = true;
-    this.svc.list().subscribe({
+    this.svc.list(usuarioId).subscribe({
       next: (rows) => {
         this.dataSource.data = rows;
         this.loading = false;
@@ -67,20 +71,24 @@ export class BilleteraListComponent implements AfterViewInit {
     });
   }
 
-  nueva(): void {
-    this.openDialog({ mode: 'create' });
+  saldoDisponibleTotal(): number {
+    return this.dataSource.data.reduce((total, billetera) => total + Number(billetera.saldo ?? 0), 0);
   }
 
-  recargar(row: BilleteraRead): void {
-    this.openDialog({ mode: 'recargar', row });
-  }
-
-  private openDialog(data: BilleteraDialogData): void {
+  agregarSaldo(): void {
     this.dialog
-      .open(BilleteraDialogComponent, { width: '520px', data })
+      .open(TransaccionDialogComponent, {
+        width: '520px',
+        data: {
+          mode: 'create',
+          defaults: {
+            tipo: TipoTransaccion.DEPOSITO,
+          },
+        },
+      })
       .afterClosed()
       .pipe(filter(Boolean))
-      .subscribe(() => this.reload());
+      .subscribe(() => this.reload(this.audit.usuarioId() ?? undefined));
   }
 
   eliminar(row: BilleteraRead): void {
@@ -88,7 +96,7 @@ export class BilleteraListComponent implements AfterViewInit {
     this.svc.delete(row.id_billetera).subscribe({
       next: () => {
         this.snack.open('Billetera eliminada', 'OK', { duration: 3000 });
-        this.reload();
+        this.reload(this.audit.usuarioId() ?? undefined);
       },
       error: (err: HttpErrorResponse) => this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
     });
