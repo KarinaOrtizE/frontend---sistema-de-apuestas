@@ -19,6 +19,13 @@
 
       <div class="form-section-label">Apuesta del jugador</div>
 
+      <!-- BUG FIX #2: show error when no eleccion is selected -->
+      @if (showAtLeastOneError) {
+        <div class="at-least-one-error">
+          Debes elegir al menos una opción (número, color, paridad o rango).
+        </div>
+      }
+
       <div class="form-row">
         <mat-form-field appearance="outline" class="field-number">
           <mat-label>Número (0–36)</mat-label>
@@ -58,12 +65,14 @@
           </mat-select>
         </mat-form-field>
 
+        <!-- BUG FIX #1: rango now uses {label, value} so display is human-readable
+             but value sent to backend is 'alto' | 'bajo' as expected -->
         <mat-form-field appearance="outline">
           <mat-label>Rango</mat-label>
           <mat-select formControlName="rango">
             <mat-option value="">— Ninguno —</mat-option>
-            @for (r of rangos(); track r) {
-              <mat-option [value]="r">{{ r }}</mat-option>
+            @for (r of rangos(); track r.value) {
+              <mat-option [value]="r.value">{{ r.label }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -78,14 +87,15 @@
           <input
             matInput
             type="number"
-            min="0"
+            min="0.01"
+            step="0.01"
             formControlName="costo_entrada"
           />
           @if (form.controls.costo_entrada.hasError('required')) {
             <mat-error>El costo es obligatorio</mat-error>
           }
           @if (form.controls.costo_entrada.hasError('min')) {
-            <mat-error>Debe ser ≥ 0</mat-error>
+            <mat-error>Debe ser mayor que 0</mat-error>
           }
         </mat-form-field>
 
@@ -95,11 +105,15 @@
           <input
             matInput
             type="number"
-            min="0"
+            min="0.01"
+            step="0.01"
             formControlName="recompensa"
           />
           @if (form.controls.recompensa.hasError('required')) {
             <mat-error>La recompensa es obligatoria</mat-error>
+          }
+          @if (form.controls.recompensa.hasError('min')) {
+            <mat-error>Debe ser mayor que 0</mat-error>
           }
         </mat-form-field>
       </div>
