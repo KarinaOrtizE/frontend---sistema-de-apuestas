@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, effect, inject, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -10,7 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { filter } from 'rxjs/operators';
 
-
+import { AuditContextService } from '../../core/audit-context.service';
 import { MetodoPagoService } from '../../core/services/metodo-pago.service';
 import { MetodoPagoRead } from '../../models/api.models';
 import { MetodoPagoDialogComponent, MetodoPagoDialogData } from './metodo-pago-dialog';
@@ -33,6 +33,7 @@ import { MetodoPagoDialogComponent, MetodoPagoDialogData } from './metodo-pago-d
 })
 export class MetodoPagoListComponent implements AfterViewInit {
   private readonly svc = inject(MetodoPagoService);
+  private readonly audit = inject(AuditContextService);
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
 
@@ -54,12 +55,20 @@ export class MetodoPagoListComponent implements AfterViewInit {
   }
 
   constructor() {
-    this.reload();
+    effect(() => {
+      const id = this.audit.usuarioId();
+      if (id === null) {
+        this.dataSource.data = [];
+        this.loading = false;
+      } else {
+        this.reload(id);
+      }
+    });
   }
 
-  reload(): void {
+  reload(usuarioId?: string): void {
     this.loading = true;
-    this.svc.list().subscribe({
+    this.svc.list(usuarioId).subscribe({
       next: (rows) => {
         this.dataSource.data = rows;
         this.loading = false;
@@ -84,7 +93,7 @@ export class MetodoPagoListComponent implements AfterViewInit {
       .open(MetodoPagoDialogComponent, { width: '520px', data })
       .afterClosed()
       .pipe(filter(Boolean))
-      .subscribe(() => this.reload());
+      .subscribe(() => this.reload(this.audit.usuarioId() ?? undefined));
   }
 
   eliminar(row: MetodoPagoRead): void {
@@ -92,7 +101,7 @@ export class MetodoPagoListComponent implements AfterViewInit {
     this.svc.delete(row.id_metodo_pago).subscribe({
       next: () => {
         this.snack.open('Método de pago eliminado', 'OK', { duration: 3000 });
-        this.reload();
+        this.reload(this.audit.usuarioId() ?? undefined);
       },
       error: (err: HttpErrorResponse) => this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
     });

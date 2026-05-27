@@ -1,8 +1,6 @@
 <h2 mat-dialog-title>
-  <mat-icon color="primary">
-    {{ data.mode === 'create' ? 'payments' : 'edit_note' }}
-  </mat-icon>
-  {{ data.mode === 'create' ? 'Nueva Transacción' : 'Editar Transacción' }}
+  <mat-icon color="primary">payments</mat-icon>
+  Nueva Transaccion
 </h2>
 
 <mat-dialog-content class="dialog-body">
@@ -24,7 +22,7 @@
 
     <!-- MONTO -->
     <mat-form-field appearance="outline">
-      <mat-label>Monto</mat-label>
+      <mat-label>Monto de la transaccion</mat-label>
       <mat-icon matPrefix>attach_money</mat-icon>
       <input matInput type="number" formControlName="monto" required />
       @if (form.controls.monto.errors?.['required'] && form.controls.monto.touched) {
@@ -35,41 +33,42 @@
       }
     </mat-form-field>
 
-    <!-- ID BILLETERA -->
+    <!-- USUARIO / BILLETERA -->
     <mat-form-field appearance="outline" class="span-2">
-      <mat-label>ID Billetera</mat-label>
+      <mat-label>Usuario</mat-label>
       <mat-icon matPrefix>account_balance_wallet</mat-icon>
-      <input matInput formControlName="id_billetera" required />
+      <mat-select formControlName="id_billetera" required>
+        @for (billetera of billeteras(); track billetera.id_billetera) {
+          <mat-option [value]="billetera.id_billetera">
+            {{ billeteraUsuarioLabel(billetera) }}
+          </mat-option>
+        }
+      </mat-select>
       @if (form.controls.id_billetera.invalid && form.controls.id_billetera.touched) {
-        <mat-error>La billetera es obligatoria</mat-error>
+        <mat-error>El usuario con billetera es obligatorio</mat-error>
       }
     </mat-form-field>
 
-    <!-- ID MÉTODO PAGO -->
+    <!-- MEDIO DE PAGO -->
     <mat-form-field appearance="outline" class="span-2">
-      <mat-label>ID Método de Pago</mat-label>
+      <mat-label>Medio de pago</mat-label>
       <mat-icon matPrefix>credit_card</mat-icon>
-      <input matInput formControlName="id_metodo_pago" required />
+      <mat-select formControlName="id_metodo_pago" required>
+        @for (metodo of metodosPago(); track metodo.id_metodo_pago) {
+          <mat-option [value]="metodo.id_metodo_pago">
+            {{ metodoPagoLabel(metodo) }}
+          </mat-option>
+        }
+      </mat-select>
       @if (form.controls.id_metodo_pago.invalid && form.controls.id_metodo_pago.touched) {
-        <mat-error>El método de pago es obligatorio</mat-error>
+        <mat-error>El medio de pago es obligatorio</mat-error>
       }
     </mat-form-field>
-
-    <!-- INFO SOLO EN EDIT -->
-    <div class="span-2 activo-row">
-      @if (data.mode === 'edit') {
-        <span class="id-hint">
-          ID: {{ data.row?.id_transaccion | slice:0:8 }}...
-        </span>
-      }
-    </div>
 
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-button type="button" (click)="cancel()">Cancelar</button>
-  <button mat-flat-button color="primary" type="button" (click)="save()">
-    {{ data.mode === 'create' ? 'Crear' : 'Guardar Cambios' }}
-  </button>
+  <button mat-flat-button color="primary" type="button" (click)="save()">Crear</button>
 </mat-dialog-actions>

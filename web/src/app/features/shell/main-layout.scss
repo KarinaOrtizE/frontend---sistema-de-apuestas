@@ -160,6 +160,12 @@
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
+.logout-btn {
+  border-color: color-mix(in srgb, white 45%, transparent) !important;
+  color: white !important;
+  border-radius: 999px !important;
+}
+
 .audit-sidebar {
   padding: 8px 10px;
   border-top: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 45%, transparent);

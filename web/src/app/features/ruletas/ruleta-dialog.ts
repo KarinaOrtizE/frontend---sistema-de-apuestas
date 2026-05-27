@@ -137,7 +137,16 @@ export interface RuletaDialogData {
       gap: 4px;
     }
 
-    // Material overrides para tema oscuro
+    .at-least-one-error {
+      font-size: 12px;
+      color: #e74c3c;
+      padding: 8px 12px;
+      background: rgba(231, 76, 60, 0.1);
+      border: 1px solid rgba(231, 76, 60, 0.25);
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
     ::ng-deep {
       .mat-mdc-form-field-flex {
         background: var(--surface-2) !important;
@@ -249,19 +258,24 @@ export class RuletaDialogComponent implements OnInit {
 
   readonly data = inject<RuletaDialogData>(MAT_DIALOG_DATA);
 
+  // BUG FIX #1: rango values must match backend: 'alto' | 'bajo'
   readonly colores   = signal(['rojo', 'negro', 'verde']);
   readonly paridades = signal(['par', 'impar']);
-  readonly rangos    = signal(['1-18', '19-36']);
+  readonly rangos    = signal([
+    { label: '1–18 (Bajo)', value: 'bajo' },
+    { label: '19–36 (Alto)', value: 'alto' },
+  ]);
 
   saving = false;
+  showAtLeastOneError = false;
 
   readonly form = this.fb.nonNullable.group({
     numero:        [null as number | null],
     color:         [''],
     paridad:       [''],
     rango:         [''],
-    costo_entrada: [0, [Validators.required, Validators.min(0)]],
-    recompensa:    [0, [Validators.required, Validators.min(0)]],
+    costo_entrada: [0, [Validators.required, Validators.min(0.01)]],
+    recompensa:    [0, [Validators.required, Validators.min(0.01)]],
   });
 
   ngOnInit(): void {
@@ -282,9 +296,36 @@ export class RuletaDialogComponent implements OnInit {
     this.dialogRef.close(false);
   }
 
+  // BUG FIX #2: validate that at least one eleccion field is set before sending
+  private buildEleccion() {
+    const v = this.form.getRawValue();
+    return {
+      numero: (v.numero !== null && v.numero !== undefined)
+        ? Number(v.numero)
+        : null,
+      color:   v.color   || null,
+      paridad: v.paridad || null,
+      rango:   v.rango   || null,
+    };
+  }
+
+  get hasAtLeastOneEleccion(): boolean {
+  const e = this.buildEleccion();
+  console.log('eleccion:', e);
+  return Object.values(e).some(val => val !== null && val !== undefined);
+  }
+
   save(): void {
+    this.showAtLeastOneError = false;
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      return;
+    }
+
+    // BUG FIX #2: guard against sending all-null eleccion
+    if (!this.hasAtLeastOneEleccion) {
+      this.showAtLeastOneError = true;
       return;
     }
 
@@ -292,12 +333,7 @@ export class RuletaDialogComponent implements OnInit {
     const v = this.form.getRawValue();
 
     const payload = {
-      eleccion_usuario: {
-        numero:  v.numero  || null,
-        color:   v.color   || null,
-        paridad: v.paridad || null,
-        rango:   v.rango   || null,
-      },
+      eleccion_usuario: this.buildEleccion(),
       costo_entrada: Number(v.costo_entrada),
       recompensa:    Number(v.recompensa),
     };
