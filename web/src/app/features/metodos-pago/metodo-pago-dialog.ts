@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuditContextService } from '../../core/audit-context.service';
@@ -25,6 +26,7 @@ export interface MetodoPagoDialogData {
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     MatSnackBarModule,
   ],
   templateUrl: './metodo-pago-dialog.html',
@@ -37,6 +39,11 @@ export class MetodoPagoDialogComponent {
   private readonly snack = inject(MatSnackBar);
 
   readonly data = inject<MetodoPagoDialogData>(MAT_DIALOG_DATA);
+  readonly tiposMetodo = [
+    { value: 'pse', label: 'PSE' },
+    { value: 'tarjeta de credito', label: 'Tarjeta de credito' },
+    { value: 'tarjeta de debito', label: 'Tarjeta de debito' },
+  ];
 
   readonly form = this.fb.nonNullable.group({
     tipo_metodo: ['', Validators.required],

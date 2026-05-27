@@ -12,7 +12,7 @@ export enum TipoTransaccion {
 }
 
 type UUID = string;
-type Decimal = number;
+type Decimal = number | string;
 
 export interface ApuestaCreate {
     id_usuario: UUID;
@@ -51,11 +51,6 @@ export interface BilleteraCreate {
 export interface BilleteraUpdate {
     id_usuario?: UUID | null;
     saldo?: Decimal | null;
-    id_usuario_edita: UUID;
-}
-
-export interface BilleteraRecarga {
-    monto: Decimal;
     id_usuario_edita: UUID;
 }
 
@@ -182,22 +177,15 @@ export interface SorteoRead {
 
 export interface TransaccionCreate {
     tipo: TipoTransaccion; 
-    monto: number;
+    monto: Decimal;
     id_billetera: UUID;
     id_metodo_pago: UUID;
-}
-
-export interface TransaccionUpdate {
-    tipo?: TipoTransaccion | null;
-    monto?: number | null;
-    id_billetera?: UUID | null;
-    id_metodo_pago?: UUID | null;
 }
 
 export interface TransaccionRead {
     id_transaccion: UUID;
     tipo: TipoTransaccion;
-    monto: number;
+    monto: Decimal;
     id_billetera: UUID;
     id_metodo_pago: UUID;
 }

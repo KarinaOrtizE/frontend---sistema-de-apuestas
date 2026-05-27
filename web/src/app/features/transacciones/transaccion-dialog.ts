@@ -1,21 +1,29 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { AuditContextService } from '../../core/audit-context.service';
+import { BilleteraService } from '../../core/services/billetera.service';
+import { MetodoPagoService } from '../../core/services/metodo-pago.service';
 import { TransaccionService } from '../../core/services/transaccion.service';
-import { TransaccionRead, TransaccionUpdate } from '../../models/api.models';
+import { UsuarioService } from '../../core/services/usuario.service';
+import { BilleteraRead, MetodoPagoRead, TipoTransaccion, UsuarioRead } from '../../models/api.models';
+import { shortId } from '../../shared/ids';
 
 export interface TransaccionDialogData {
-  mode: 'create' | 'edit';
-  row?: TransaccionRead;
+  mode: 'create';
+  defaults?: Partial<{
+    tipo: TipoTransaccion;
+    id_billetera: string;
+  }>;
 }
 
 @Component({
@@ -34,33 +42,55 @@ export interface TransaccionDialogData {
   ],
   templateUrl: './transaccion-dialog.html',
 })
-export class TransaccionDialogComponent {
+export class TransaccionDialogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(TransaccionService);
+  private readonly billeteraService = inject(BilleteraService);
+  private readonly metodoPagoService = inject(MetodoPagoService);
+  private readonly usuarioService = inject(UsuarioService);
+  private readonly audit = inject(AuditContextService);
   private readonly dialogRef = inject(MatDialogRef<TransaccionDialogComponent, boolean>);
   private readonly snack = inject(MatSnackBar);
+  private readonly data = inject<TransaccionDialogData>(MAT_DIALOG_DATA, { optional: true });
 
-  readonly data = inject<TransaccionDialogData>(MAT_DIALOG_DATA);
-
-  readonly tipos = ['DEPOSITO', 'RETIRO', 'APUESTA', 'PREMIO'];
+  readonly tipos = Object.values(TipoTransaccion);
+  readonly billeteras = signal<BilleteraRead[]>([]);
+  readonly metodosPago = signal<MetodoPagoRead[]>([]);
+  readonly usuarios = signal<UsuarioRead[]>([]);
+  readonly shortId = shortId;
 
   readonly form = this.fb.nonNullable.group({
-    tipo: ['', Validators.required],
+    tipo: [this.data?.defaults?.tipo ?? TipoTransaccion.DEPOSITO, Validators.required],
     monto: [0, [Validators.required, Validators.min(0.01)]],
-    id_billetera: ['', Validators.required],
+    id_billetera: [this.data?.defaults?.id_billetera ?? '', Validators.required],
     id_metodo_pago: ['', Validators.required],
   });
 
-  constructor() {
-    if (this.data.mode === 'edit' && this.data.row) {
-      const r = this.data.row;
-      this.form.patchValue({
-        tipo: r.tipo,
-        monto: r.monto,
-        id_billetera: r.id_billetera,
-        id_metodo_pago: r.id_metodo_pago,
-      });
-    }
+  ngOnInit(): void {
+    const usuarioId = this.audit.usuarioId() ?? undefined;
+
+    this.usuarioService.list().subscribe({
+      next: (rows) => this.usuarios.set(rows),
+      error: (err: HttpErrorResponse) =>
+        this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
+    });
+
+    this.billeteraService.list(usuarioId).subscribe({
+      next: (rows) => {
+        this.billeteras.set(rows);
+        if (rows.length === 1 && !this.data?.defaults?.id_billetera) {
+          this.form.controls.id_billetera.setValue(rows[0].id_billetera);
+        }
+      },
+      error: (err: HttpErrorResponse) =>
+        this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
+    });
+
+    this.metodoPagoService.list(usuarioId).subscribe({
+      next: (rows) => this.metodosPago.set(rows),
+      error: (err: HttpErrorResponse) =>
+        this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
+    });
   }
 
   cancel(): void {
@@ -75,33 +105,18 @@ export class TransaccionDialogComponent {
 
     const v = this.form.getRawValue();
 
-    if (this.data.mode === 'create') {
-      this.service.create({
-        tipo: v.tipo as any,
+    this.service
+      .create({
+        tipo: v.tipo,
         monto: v.monto,
         id_billetera: v.id_billetera,
         id_metodo_pago: v.id_metodo_pago,
-      }).subscribe({
+      })
+      .subscribe({
         next: () => this.dialogRef.close(true),
         error: (err: HttpErrorResponse) =>
           this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
       });
-    } else {
-      const id = this.data.row!.id_transaccion;
-
-      const body: TransaccionUpdate = {};
-
-      if (v.tipo !== this.data.row?.tipo) body.tipo = v.tipo as any;
-      if (v.monto !== this.data.row?.monto) body.monto = v.monto;
-      if (v.id_billetera !== this.data.row?.id_billetera) body.id_billetera = v.id_billetera;
-      if (v.id_metodo_pago !== this.data.row?.id_metodo_pago) body.id_metodo_pago = v.id_metodo_pago;
-
-      this.service.update(id, body).subscribe({
-        next: () => this.dialogRef.close(true),
-        error: (err: HttpErrorResponse) =>
-          this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
-      });
-    }
   }
 
   private msg(err: HttpErrorResponse): string {
@@ -109,5 +124,31 @@ export class TransaccionDialogComponent {
     if (typeof d === 'string') return d;
     if (Array.isArray(d)) return d.map((x) => x.msg ?? JSON.stringify(x)).join('; ');
     return err.message;
+  }
+
+  metodoPagoLabel(metodo: MetodoPagoRead): string {
+    return `${this.formatoMedioPago(metodo.tipo_metodo)} - ${metodo.nombre_titular}`;
+  }
+
+  billeteraUsuarioLabel(billetera: BilleteraRead): string {
+    const usuario = this.usuarios().find((u) => u.id_usuario === billetera.id_usuario);
+    const nombre = usuario?.nombre_usuario || usuario?.nombre_completo || this.shortId(billetera.id_usuario);
+
+    return `${nombre} - ${this.shortId(billetera.id_billetera)}`;
+  }
+
+  private formatoMedioPago(tipo: string): string {
+    const value = tipo.trim().toLowerCase();
+    const labels: Record<string, string> = {
+      pse: 'PSE',
+      credito: 'Tarjeta de credito',
+      'tarjeta credito': 'Tarjeta de credito',
+      'tarjeta de credito': 'Tarjeta de credito',
+      debito: 'Tarjeta de debito',
+      'tarjeta debito': 'Tarjeta de debito',
+      'tarjeta de debito': 'Tarjeta de debito',
+    };
+
+    return labels[value] ?? tipo;
   }
 }

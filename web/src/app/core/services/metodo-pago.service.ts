@@ -11,8 +11,11 @@ export class MetodoPagoService {
 
   constructor(private readonly http: HttpClient) {}
 
-  list(): Observable<MetodoPagoRead[]> {
-    const params = new HttpParams().set('skip', 0).set('limit', 500);
+  list(usuarioId?: string): Observable<MetodoPagoRead[]> {
+    let params = new HttpParams().set('skip', 0).set('limit', 500);
+    if (usuarioId) {
+      params = params.set('usuario_id', usuarioId);
+    }
     return this.http.get<MetodoPagoRead[]>(`${this.base}/`, { params });
   }
 

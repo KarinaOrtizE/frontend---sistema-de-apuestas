@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { BilleteraCreate, BilleteraRead, BilleteraRecarga } from '../../models/api.models';
+import { BilleteraCreate, BilleteraRead } from '../../models/api.models';
 
 @Injectable({ providedIn: 'root' })
 export class BilleteraService {
@@ -11,8 +11,11 @@ export class BilleteraService {
 
   constructor(private readonly http: HttpClient) {}
 
-  list(): Observable<BilleteraRead[]> {
-    const params = new HttpParams().set('skip', 0).set('limit', 500);
+  list(usuarioId?: string): Observable<BilleteraRead[]> {
+    let params = new HttpParams().set('skip', 0).set('limit', 500);
+    if (usuarioId) {
+      params = params.set('usuario_id', usuarioId);
+    }
     return this.http.get<BilleteraRead[]>(this.base, { params });
   }
 
@@ -22,10 +25,6 @@ export class BilleteraService {
 
   create(body: BilleteraCreate): Observable<BilleteraRead> {
     return this.http.post<BilleteraRead>(this.base, body);
-  }
-
-  recargar(id: string, body: BilleteraRecarga): Observable<BilleteraRead> {
-    return this.http.post<BilleteraRead>(`${this.base}/${id}/recargar`, body);
   }
 
   delete(id: string): Observable<void> {

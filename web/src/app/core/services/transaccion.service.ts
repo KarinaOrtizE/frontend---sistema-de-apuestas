@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { TransaccionCreate, TransaccionRead, TransaccionUpdate } from '../../models/api.models';
+import { TransaccionCreate, TransaccionRead } from '../../models/api.models';
 
 @Injectable({ providedIn: 'root' })
 export class TransaccionService {
@@ -11,8 +11,11 @@ export class TransaccionService {
 
   constructor(private readonly http: HttpClient) {}
 
-  list(): Observable<TransaccionRead[]> {
-    const params = new HttpParams().set('skip', 0).set('limit', 500);
+  list(usuarioId?: string): Observable<TransaccionRead[]> {
+    let params = new HttpParams().set('skip', 0).set('limit', 500);
+    if (usuarioId) {
+      params = params.set('usuario_id', usuarioId);
+    }
     return this.http.get<TransaccionRead[]>(`${this.base}/`, { params });
   }
 
@@ -22,13 +25,5 @@ export class TransaccionService {
 
   create(body: TransaccionCreate): Observable<TransaccionRead> {
     return this.http.post<TransaccionRead>(`${this.base}/`, body);
-  }
-
-  update(id: string, body: TransaccionUpdate): Observable<TransaccionRead> {
-    return this.http.put<TransaccionRead>(`${this.base}/${id}`, body);
-  }
-
-  delete(id: string): Observable<void> {
-    return this.http.delete(`${this.base}/${id}`, { observe: 'response' }).pipe(map(() => undefined));
   }
 }
