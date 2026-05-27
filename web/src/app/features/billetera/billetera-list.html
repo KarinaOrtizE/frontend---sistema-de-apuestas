@@ -1,9 +1,16 @@
 <div class="page-head">
   <h1>Billeteras</h1>
-  <button mat-flat-button color="primary" type="button" (click)="nueva()">
-    <mat-icon>add</mat-icon>
-    Nueva Billetera
-  </button>
+  <div class="head-actions">
+    <button mat-flat-button color="primary" type="button" (click)="agregarSaldo()">
+      <mat-icon>add_card</mat-icon>
+      Añadir saldo
+    </button>
+  </div>
+</div>
+
+<div class="saldo-summary">
+  <span>Saldo disponible</span>
+  <strong>{{ saldoDisponibleTotal() | currency:'COP':'symbol':'1.2-2' }}</strong>
 </div>
 
 @if (loading) {
@@ -40,9 +47,6 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let r" class="actions-cell">
-          <button mat-icon-button type="button" color="accent" (click)="recargar(r)" aria-label="Recargar saldo">
-            <mat-icon>add_card</mat-icon>
-          </button>
           <button mat-icon-button type="button" color="warn" (click)="eliminar(r)" aria-label="Eliminar">
             <mat-icon>delete</mat-icon>
           </button>

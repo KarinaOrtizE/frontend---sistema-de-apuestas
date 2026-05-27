@@ -13,6 +13,32 @@
   }
 }
 
+.head-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.saldo-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: -8px 0 24px;
+
+  span {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-large);
+  }
+
+  strong {
+    color: var(--mat-sys-primary);
+    font: var(--mat-sys-headline-small);
+    font-weight: 700;
+  }
+}
+
 .loading-container {
   display: flex;
   flex-direction: column;

@@ -12,22 +12,56 @@
       <canvas
         #wheelCanvas
         class="wheel-canvas"
-        width="400"
-        height="400"
+        width="360"
+        height="360"
         (click)="spinWheel()"
       ></canvas>
-      <div class="wheel-center-btn" (click)="spinWheel()" [class.spinning]="isSpinning">
-        <span *ngIf="!isSpinning">GIRAR</span>
-        <span *ngIf="isSpinning">...</span>
+      <div
+        class="wheel-center-btn"
+        (click)="spinWheel()"
+        [class.spinning]="isSpinning"
+        [class.disabled]="!selectedRuleta && !isSpinning"
+      >
+        @if (isSpinning) {
+          <span>···</span>
+        } @else if (!selectedRuleta) {
+          <span class="btn-hint">↑<br>elige</span>
+        } @else {
+          <span>GIRAR</span>
+        }
       </div>
+
+      <!-- Overlay resultado ganó/perdió -->
+      @if (gameOutcome) {
+        <div class="outcome-overlay" [class.won]="gameOutcome.gano" [class.lost]="!gameOutcome.gano">
+          <span class="outcome-icon">{{ gameOutcome.gano ? '✓' : '✗' }}</span>
+          <span class="outcome-label">{{ gameOutcome.gano ? '¡Ganaste!' : 'Perdiste' }}</span>
+          <span class="outcome-amount">
+            {{ gameOutcome.gano ? '+' : '-' }}{{ (gameOutcome.gano ? gameOutcome.recompensa : gameOutcome.costo) | currency:'USD':'symbol':'1.0-0' }}
+          </span>
+        </div>
+      }
     </div>
 
+    <!-- Resultado del número -->
     <div class="result-badge" [class.visible]="lastResult !== null" [attr.data-color]="lastResult?.color">
       @if (lastResult) {
         <span class="result-num">{{ lastResult.numero }}</span>
         <span class="result-info">{{ lastResult.color | titlecase }} · {{ lastResult.paridad | titlecase }}</span>
       }
     </div>
+
+    <!-- Hint de selección -->
+    @if (!selectedRuleta && !isSpinning && !lastResult) {
+      <p class="select-hint">← Selecciona una ruleta para apostar</p>
+    }
+    @if (selectedRuleta && !isSpinning) {
+      <div class="selected-hint">
+        <mat-icon>casino</mat-icon>
+        Apostando <strong>{{ selectedRuleta.costo_entrada | currency:'USD':'symbol':'1.0-0' }}</strong>
+        · Premio <strong>{{ selectedRuleta.recompensa | currency:'USD':'symbol':'1.0-0' }}</strong>
+      </div>
+    }
   </div>
 
   <!-- ── Panel derecho: gestión ── -->
@@ -38,12 +72,7 @@
         <h1 class="manage-title">Gestión</h1>
         <p class="manage-sub">Configuración de ruletas</p>
       </div>
-      <button
-        mat-flat-button
-        class="btn-nuevo"
-        type="button"
-        (click)="nuevo()"
-      >
+      <button mat-flat-button class="btn-nuevo" type="button" (click)="nuevo()">
         <mat-icon>add</mat-icon>
         Nueva
       </button>
@@ -58,28 +87,29 @@
 
       <div class="cards-list">
         @for (r of dataSource.data; track r.id_ruleta) {
-          <div class="ruleta-card">
+          <div
+            class="ruleta-card"
+            [class.selected]="isSelected(r)"
+            (click)="selectRuleta(r)"
+          >
             <div class="card-left">
-              <div
-                class="card-num"
-                [style.background]="getBallColor(r.eleccion_usuario?.numero)"
-              >
-                {{ r.eleccion_usuario?.numero ?? '?' }}
+              <div class="card-num" [style.background]="getBallColor(r.eleccion_usuario?.['numero'])">
+                {{ r.eleccion_usuario?.['numero'] ?? '—' }}
               </div>
             </div>
 
             <div class="card-body">
               <div class="card-badges">
-                @if (r.eleccion_usuario?.color) {
-                  <span class="badge" [attr.data-color]="r.eleccion_usuario?.color">
-                    {{ r.eleccion_usuario?.color }}
+                @if (r.eleccion_usuario?.['color']) {
+                  <span class="badge" [attr.data-color]="r.eleccion_usuario?.['color']">
+                    {{ r.eleccion_usuario?.['color'] }}
                   </span>
                 }
-                @if (r.eleccion_usuario?.paridad) {
-                  <span class="badge badge-neutral">{{ r.eleccion_usuario?.paridad }}</span>
+                @if (r.eleccion_usuario?.['paridad']) {
+                  <span class="badge badge-neutral">{{ r.eleccion_usuario?.['paridad'] }}</span>
                 }
-                @if (r.eleccion_usuario?.rango) {
-                  <span class="badge badge-neutral">{{ r.eleccion_usuario?.rango }}</span>
+                @if (r.eleccion_usuario?.['rango']) {
+                  <span class="badge badge-neutral">{{ r.eleccion_usuario?.['rango'] }}</span>
                 }
               </div>
               <div class="card-amounts">
@@ -94,23 +124,11 @@
               </div>
             </div>
 
-            <div class="card-actions">
-              <button
-                mat-icon-button
-                type="button"
-                class="btn-edit"
-                (click)="editar(r)"
-                aria-label="Editar"
-              >
+            <div class="card-actions" (click)="$event.stopPropagation()">
+              <button mat-icon-button type="button" class="btn-edit" (click)="editar(r)" aria-label="Editar">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button
-                mat-icon-button
-                type="button"
-                class="btn-delete"
-                (click)="eliminar(r)"
-                aria-label="Eliminar"
-              >
+              <button mat-icon-button type="button" class="btn-delete" (click)="eliminar(r)" aria-label="Eliminar">
                 <mat-icon>delete_outline</mat-icon>
               </button>
             </div>
@@ -126,10 +144,7 @@
         }
       </div>
 
-      <mat-paginator
-        [pageSizeOptions]="[5, 10, 25]"
-        showFirstLastButtons
-      ></mat-paginator>
+      <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
 
     }
   </div>
