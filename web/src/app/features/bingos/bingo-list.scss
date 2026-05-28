@@ -1,110 +1,107 @@
-.page-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
-  
-  h1 {
-    margin: 0;
-    font: var(--mat-sys-title-large);
-    font-weight: 700;
-    letter-spacing: -0.01em;
-  }
-}
+// ── Cartón dialog ─────────────────────────────────────────
 
-.loading-container {
+.game-banner {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 64px 24px;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 16px;
+  animation: pop-in 0.3s ease;
+
+  mat-icon { font-size: 26px; width: 26px; height: 26px; }
+
+  &.won {
+    background: color-mix(in srgb, var(--mat-sys-tertiary) 15%, transparent);
+    color: var(--mat-sys-tertiary);
+    border: 2px solid color-mix(in srgb, var(--mat-sys-tertiary) 35%, transparent);
+  }
+}
+
+@keyframes pop-in {
+  0%   { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+// Área de sorteo
+.draw-area {
+  display: flex;
+  align-items: center;
   gap: 16px;
-  color: var(--mat-sys-on-surface-variant);
-  
-  span {
-    font: var(--mat-sys-body-medium);
-  }
+  margin-bottom: 12px;
 }
 
-.table-wrap {
-  overflow: auto;
-  border-radius: 12px;
-  background-color: var(--mat-sys-surface);
-  
-  table {
-    width: 100%;
-    border-collapse: separate;
-  }
-}
-
-th.mat-header-cell {
-  background: color-mix(in srgb, var(--mat-sys-surface-container-high) 60%, var(--mat-sys-surface));
-  font: var(--mat-sys-label-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--mat-sys-on-surface);
-}
-
-tr.mat-row {
+.drawn-ball {
+  width: 56px;
   height: 56px;
-  
-  &:hover {
-    background-color: color-mix(in srgb, var(--mat-sys-primary) 5%, transparent) !important;
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--mat-sys-outline-variant) 60%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--mat-sys-on-surface-variant);
+  flex-shrink: 0;
+  transition: all 0.2s;
+
+  &.has-number {
+    border-color: var(--mat-sys-primary);
+    color: var(--mat-sys-primary);
+    background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+    animation: pop-in 0.2s ease;
+  }
+
+  mat-icon { font-size: 24px; width: 24px; height: 24px; }
+}
+
+.draw-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .draw-count {
+    font-size: 12px;
+    color: var(--mat-sys-on-surface-variant);
   }
 }
 
-.mat-column-aciertos {
+// Historial chips
+.drawn-history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 12px;
+  max-height: 72px;
+  overflow-y: auto;
+}
+
+.drawn-chip {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
   font-weight: 600;
+  background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
   color: var(--mat-sys-primary);
 }
 
-.mat-column-costo_entrada {
-  font-weight: 500;
-}
-
-.mat-column-recompensa {
-  font-weight: 700;
-  color: var(--mat-sys-tertiary);
-}
-
-/* acciones */
-.actions-cell {
-  white-space: nowrap;
-  text-align: right;
-  padding-right: 16px !important;
-}
-
-/* badge de recompensa */
-.badge {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font: var(--mat-sys-label-small);
-  font-weight: 700;
-
-  &.recompensa {
-    background-color: color-mix(in srgb, var(--mat-sys-tertiary) 12%, transparent);
-    color: var(--mat-sys-tertiary);
-  }
-}
-
-.mat-paginator {
-  background-color: transparent !important;
-  border-top: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 45%, transparent);
-}
-
+// Tabla
 .carton-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 8px;
 
   th {
     background: var(--mat-sys-primary);
     color: var(--mat-sys-on-primary);
     text-align: center;
-    padding: 8px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
+    padding: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    font-size: 15px;
+    transition: background 0.3s;
   }
 
   td {
@@ -113,23 +110,93 @@ tr.mat-row {
     border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 40%, transparent);
     cursor: pointer;
     font-size: 14px;
-    transition: background 0.15s;
+    font-weight: 500;
+    transition: background 0.15s, transform 0.1s;
+    position: relative;
+    min-width: 44px;
+    height: 44px;
 
-    &:hover { background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent); }
+    // Número disponible para marcar (ya sorteado)
+    &.drawn {
+      background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+      color: var(--mat-sys-primary);
+      font-weight: 600;
+
+      &:hover {
+        background: color-mix(in srgb, var(--mat-sys-primary) 16%, transparent);
+        transform: scale(1.06);
+      }
+    }
+
+    // Número aún no sorteado
+    &.not-drawn {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
 
     &.free {
       background: var(--mat-sys-primary);
       color: var(--mat-sys-on-primary);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
       cursor: default;
+
+      .free-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+      }
     }
 
     &.marked {
-      background: color-mix(in srgb, var(--mat-sys-tertiary) 15%, transparent);
+      background: color-mix(in srgb, var(--mat-sys-tertiary) 18%, transparent);
       color: var(--mat-sys-tertiary);
-      font-weight: 600;
+      font-weight: 700;
+      animation: cell-pop 0.2s ease;
+
+      .cell-check {
+        position: absolute;
+        top: 2px;
+        right: 4px;
+        font-size: 11px;
+        line-height: 1;
+        opacity: 0.7;
+      }
     }
   }
+}
+
+.table-won th {
+  background: var(--mat-sys-tertiary);
+}
+
+@keyframes cell-pop {
+  0%   { transform: scale(0.85); }
+  60%  { transform: scale(1.1);  }
+  100% { transform: scale(1);    }
+}
+
+// ── Formulario dialog ─────────────────────────────────────
+
+.dialog-body {
+  padding-top: 8px;
+}
+
+.grid-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-top: 4px;
+
+  .span-2 { grid-column: span 2; }
+}
+
+.activo-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.id-hint {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+  font-family: monospace;
 }
