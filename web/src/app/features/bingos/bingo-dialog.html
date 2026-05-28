@@ -3,8 +3,49 @@
     <mat-icon color="primary">grid_on</mat-icon>
     Cartón — {{ data.row?.id_bingo | slice:0:8 }}...
   </h2>
+
   <mat-dialog-content>
-    <table class="carton-table">
+
+    @if (gameState === 'won') {
+      <div class="game-banner won">
+        <mat-icon>emoji_events</mat-icon>
+        <span>¡BINGO! ¡Ganaste!</span>
+      </div>
+    }
+
+    <!-- Número sorteado y botón de sortear -->
+    <div class="draw-area">
+      <div class="drawn-ball" [class.has-number]="lastDrawn !== null">
+        @if (lastDrawn !== null) {
+          {{ lastDrawn }}
+        } @else {
+          <mat-icon>casino</mat-icon>
+        }
+      </div>
+      <div class="draw-info">
+        <span class="draw-count">{{ drawnNumbers.size }} número(s) sorteado(s)</span>
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          [disabled]="gameState === 'won' || drawPool.length === 0"
+          (click)="drawNumber()">
+          <mat-icon>shuffle</mat-icon>
+          Sacar número
+        </button>
+      </div>
+    </div>
+
+    <!-- Historial de números sorteados -->
+    @if (drawnNumbers.size > 0) {
+      <div class="drawn-history">
+        @for (n of drawnNumbers; track n) {
+          <span class="drawn-chip">{{ n }}</span>
+        }
+      </div>
+    }
+
+    <table class="carton-table" [class.table-won]="gameState === 'won'">
       <thead>
         <tr>
           @for (l of letters; track l) {
@@ -16,21 +57,37 @@
         @for (row of [0,1,2,3,4]; track row) {
           <tr>
             @for (col of [0,1,2,3,4]; track col) {
-              <td [class.free]="isFree(col, row)"
-                  [class.marked]="marked[col][row]"
-                  (click)="toggleCell(col, row)">
-                {{ isFree(col, row) ? 'FREE' : getCell(col, row) }}
+              <td
+                [class.free]="isFree(col, row)"
+                [class.marked]="marked[col][row] && !isFree(col, row)"
+                [class.drawn]="isDrawn(col, row) && !isFree(col, row) && !marked[col][row]"
+                [class.not-drawn]="!isDrawn(col, row)"
+                (click)="toggleCell(col, row)">
+                @if (isFree(col, row)) {
+                  <span class="free-label">FREE</span>
+                } @else if (marked[col][row]) {
+                  <span class="cell-check">✓</span>
+                  <span class="cell-num">{{ getCell(col, row) }}</span>
+                } @else {
+                  {{ getCell(col, row) }}
+                }
               </td>
             }
           </tr>
         }
       </tbody>
     </table>
+
   </mat-dialog-content>
+
   <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="resetMarks()">Limpiar</button>
+    <button mat-stroked-button type="button" (click)="resetMarks()">
+      <mat-icon>refresh</mat-icon>
+      Reiniciar
+    </button>
     <button mat-flat-button color="primary" type="button" (click)="cancel()">Cerrar</button>
   </mat-dialog-actions>
+
 } @else {
   <h2 mat-dialog-title>
     <mat-icon color="primary">
